@@ -3,7 +3,7 @@
     {
       "id": 3,
       "name": "1/4 a 1000$",
-      "price": "1200",
+      "price": "1234",
       "priceAlt": "1400"
     },
     {
@@ -51,8 +51,8 @@
     {
       "id": 112,
       "name": "1/2 Kilo",
-      "price": "5500",
-      "priceAlt": "6000"
+      "price": "7000",
+      "priceAlt": "7500"
     },
     {
       "id": 113,
@@ -233,211 +233,18 @@
       "name": "Gaseosa 500ml",
       "price": 1800,
       "priceAlt": 1900
+    },
+    {
+      "id": 251,
+      "name": "1/2 Kilo",
+      "price": "23223",
+      "priceAlt": "232323"
     }
   ],
-  "sales": [
-    {
-      "products": [
-        {
-          "id": 112,
-          "name": "1/2 Kilo",
-          "price": 5000,
-          "quantity": 2,
-          "total": 10000
-        },
-        {
-          "id": 126,
-          "name": "VASITO X 2u",
-          "price": 100,
-          "quantity": 2,
-          "total": 200
-        }
-      ],
-      "paymentMethod": "Débito",
-      "total": 10200,
-      "date": "2024-11-20T02:13:30.738Z"
-    },
-    {
-      "products": [
-        {
-          "id": 111,
-          "name": "1 Kilo",
-          "price": 9500,
-          "quantity": 1,
-          "total": 9500
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 9500,
-      "date": "2024-11-20T02:13:43.943Z"
-    },
-    {
-      "products": [
-        {
-          "id": 112,
-          "name": "1/2 Kilo",
-          "price": 5000,
-          "quantity": 2,
-          "total": 10000
-        }
-      ],
-      "paymentMethod": "Crédito",
-      "total": 10000,
-      "date": "2024-11-20T02:13:53.194Z"
-    },
-    {
-      "products": [
-        {
-          "id": 111,
-          "name": "1 Kilo",
-          "price": 9000,
-          "quantity": 1,
-          "total": 9000
-        }
-      ],
-      "paymentMethod": "Débito",
-      "total": 9000,
-      "date": "2024-11-20T02:14:15.964Z"
-    },
-    {
-      "products": [
-        {
-          "id": 22,
-          "name": "CASATA - ESCOCES X 8",
-          "price": 8500,
-          "quantity": 1,
-          "total": 8500
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 8500,
-      "date": "2024-11-20T02:29:14.763Z"
-    },
-    {
-      "products": [
-        {
-          "id": 112,
-          "name": "1/2 Kilo",
-          "price": 5500,
-          "quantity": 2,
-          "total": 11000
-        },
-        {
-          "id": 128,
-          "name": "1 Churro + 1 Media Luna",
-          "price": 550,
-          "quantity": 1,
-          "total": 550
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 11550,
-      "date": "2024-11-20T02:50:17.654Z"
-    },
-    {
-      "products": [
-        {
-          "id": 111,
-          "name": "1 Kilo",
-          "price": 9500,
-          "quantity": 3,
-          "total": 28500
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 28500,
-      "date": "2024-11-20T03:02:32.447Z"
-    },
-    {
-      "products": [
-        {
-          "id": 21,
-          "name": "CASATA - SUIZO X 8",
-          "price": 7500,
-          "quantity": 2,
-          "total": 15000
-        }
-      ],
-      "paymentMethod": "Débito",
-      "total": 15000,
-      "date": "2024-11-20T03:03:38.462Z"
-    },
-    {
-      "products": [
-        {
-          "id": 112,
-          "name": "1/2 Kilo",
-          "price": 5500,
-          "quantity": 1,
-          "total": 5500
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 5500,
-      "date": "2024-11-20T13:31:54.545Z"
-    },
-    {
-      "products": [
-        {
-          "id": 112,
-          "name": "1/2 Kilo",
-          "price": "6000",
-          "quantity": 2,
-          "total": 12000
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 12000,
-      "date": "2024-11-20T13:58:03.537Z"
-    },
-    {
-      "products": [
-        {
-          "id": 112,
-          "name": "1/2 Kilo",
-          "price": "6000",
-          "quantity": 1,
-          "total": 6000
-        },
-        {
-          "id": 126,
-          "name": "VASITO X 2u",
-          "price": 150,
-          "quantity": 1,
-          "total": 150
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 6150,
-      "date": "2024-11-20T14:19:19.440Z"
-    },
-    {
-      "products": [
-        {
-          "id": 113,
-          "name": "1/4 Kilo",
-          "price": 3200,
-          "quantity": 1,
-          "total": 3200
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 3200,
-      "date": "2024-11-20T14:22:00.022Z"
-    },
-    {
-      "products": [
-        {
-          "id": 112,
-          "name": "1/2 Kilo",
-          "price": "6000",
-          "quantity": 1,
-          "total": 6000
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 6000,
-      "date": "2024-11-20T14:50:05.940Z"
-    }
+  "sales": [],
+  "initialCash": {},
+  "withdrawals": [],
+  "closures": [
+    
   ]
 }

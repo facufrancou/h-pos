@@ -9,7 +9,7 @@ function SalesByDate() {
   const fetchSales = () => {
     // Llama al backend con el rango de fechas
     axios
-      .get(`http://localhost:5000/sales/date-range`, {
+      .get(`http://10.10.10.127:5000/sales/date-range`, {
         params: { startDate, endDate },
       })
       .then((response) => {

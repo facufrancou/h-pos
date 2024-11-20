@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'http://10.10.10.127:5000';
 
 export const getProducts = async () => {
   const response = await axios.get(`${API_URL}/products`);
@@ -13,13 +13,19 @@ export const createSale = async (sale) => {
 };
 
 export const downloadDailyReport = async () => {
-  const response = await axios.get(`${API_URL}/sales/daily-report`, { responseType: 'blob' });
-  const url = window.URL.createObjectURL(new Blob([response.data]));
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', 'reporte_diario.pdf');
-  document.body.appendChild(link);
-  link.click();
+  try {
+    const response = await axios.get(`${API_URL}/sales/pdf/daily-report`, {
+      responseType: 'blob', // Para manejar la descarga de archivos
+    });
+    const blobURL = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = blobURL;
+    link.setAttribute('download', `Reporte_Diario_${new Date().toLocaleDateString()}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+  } catch (error) {
+    console.error('Error al descargar el reporte diario:', error);
+  }
 };
 
 export const addProduct = async (product) => {

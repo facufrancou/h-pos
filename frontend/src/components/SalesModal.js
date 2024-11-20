@@ -108,7 +108,7 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts, hand
             {/* Selección de Método de Pago */}
             <h6>Selecciona la condición de venta:</h6>
             <div>
-              {['Débito', 'Crédito', 'Transferencia', 'Efectivo', 'App Delivery'].map((method) => (
+              {['Debito', 'Credito', 'Transferencia', 'Efectivo', 'App Delivery'].map((method) => (
                 <div className="form-check" key={method}>
                   <input
                     type="radio"
