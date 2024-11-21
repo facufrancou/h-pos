@@ -282,59 +282,95 @@ exports.generateDailyReportPDF = (req, res) => {
   const withdrawals = db.withdrawals || [];
   const closures = db.closures || [];
 
-  const doc = new PDFDocument();
-  const filename = `Reporte_Diario_${new Date().toISOString()}.pdf`;
+  // Filtrar ventas y cierres del día actual
+  const today = new Date().toISOString().split('T')[0]; // Fecha en formato YYYY-MM-DD
+  const dailySales = sales.filter((sale) => sale.date.startsWith(today));
+  const dailyClosures = closures.filter((closure) => closure.date.startsWith(today));
+  const dailyWithdrawals = withdrawals.filter((withdrawal) => withdrawal.date.startsWith(today));
 
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+  // Calcular totales
+  const totalSalesAmount = dailySales.reduce((sum, sale) => sum + sale.total, 0);
+  const totalSalesCount = dailySales.length;
 
-  doc.pipe(res);
-
-  doc.fontSize(20).text('Reporte Diario', { align: 'center' });
-  doc.moveDown();
-  doc.fontSize(14).text(`Fecha: ${new Date().toLocaleString()}`);
-  doc.moveDown();
-
-  // Totales generales
-  const totalSales = sales.reduce((sum, sale) => sum + sale.total, 0);
-  const totalWithdrawals = withdrawals.reduce((sum, w) => sum + w.amount, 0);
-
-  doc.text(`Total Ventas: $${totalSales}`);
-  doc.text(`Total Retiros: $${totalWithdrawals}`);
-  doc.moveDown();
-
-  // Ventas por método de pago
-  const paymentBreakdown = sales.reduce((acc, sale) => {
+  const paymentMethodTotals = dailySales.reduce((acc, sale) => {
     acc[sale.paymentMethod] = (acc[sale.paymentMethod] || 0) + sale.total;
     return acc;
   }, {});
 
-  doc.text('Desglose por Método de Pago:', { underline: true });
-  Object.entries(paymentBreakdown).forEach(([method, total]) => {
-    doc.text(`${method}: $${total}`);
+  const totalWithdrawalsAmount = dailyWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+
+  // Crear el documento PDF
+  const doc = new PDFDocument();
+  const filename = `Reporte_Diario_${today}.pdf`;
+
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.setHeader('Content-Type', 'application/pdf');
+
+  doc.pipe(res);
+
+  // Encabezado
+  doc.fontSize(18).text('Reporte Diario', { align: 'center' });
+  doc.fontSize(12).text(`Fecha: ${today}`, { align: 'center' });
+  doc.moveDown();
+
+  // Totales generales
+  doc.fontSize(14).text('Totales Generales:');
+  doc.fontSize(12).text(`Total de Ventas: ${totalSalesCount} ventas`);
+  doc.fontSize(12).text(`Monto Total de Ventas: $${totalSalesAmount}`);
+  doc.moveDown();
+
+  // Desglose por método de pago
+  doc.fontSize(14).text('Desglose por Método de Pago:');
+  Object.entries(paymentMethodTotals).forEach(([method, total]) => {
+    doc.fontSize(12).text(`${method}: $${total}`);
   });
   doc.moveDown();
 
-  // Detalle de retiros
-  doc.text('Detalle de Retiros:', { underline: true });
-  if (withdrawals.length === 0) {
-    doc.text('No se registraron retiros.');
+  // Total de retiros
+  doc.fontSize(14).text('Retiros Totales:');
+  doc.fontSize(12).text(`Monto Total de Retiros: $${totalWithdrawalsAmount}`);
+  doc.moveDown();
+
+  // Detalle de Retiros
+  doc.fontSize(14).text('Detalle de Retiros:');
+  if (dailyWithdrawals.length === 0) {
+    doc.fontSize(12).text('No se registraron retiros.');
   } else {
-    withdrawals.forEach((withdrawal, idx) => {
-      doc.text(`${idx + 1}. ${new Date(withdrawal.date).toLocaleString()} - $${withdrawal.amount} - Operador: ${withdrawal.operator}`);
+    dailyWithdrawals.forEach((withdrawal, idx) => {
+      doc.fontSize(12).text(
+        `${idx + 1}. Fecha: ${new Date(withdrawal.date).toLocaleString()} - Operador: ${withdrawal.operator} - Monto: $${withdrawal.amount}`
+      );
     });
   }
   doc.moveDown();
 
-  // Ventas detalladas
-  doc.text('Detalle de Ventas:', { underline: true });
-  if (sales.length === 0) {
-    doc.text('No se registraron ventas.');
+  // Balance por cierre
+  doc.fontSize(14).text('Balance por Cierre de Turno:');
+  if (dailyClosures.length === 0) {
+    doc.fontSize(12).text('No se registraron cierres de turno.');
   } else {
-    sales.forEach((sale, idx) => {
-      doc.text(`${idx + 1}. Fecha: ${new Date(sale.date).toLocaleString()} - Total: $${sale.total} - Método de Pago: ${sale.paymentMethod}`);
+    dailyClosures.forEach((closure) => {
+      doc.fontSize(12).text(
+        `Cierre N°${closure.closureNumber} - ${closure.type} - Fecha: ${new Date(closure.date).toLocaleString()}`
+      );
+      doc.fontSize(12).text(`Ventas Totales: $${closure.totalSales}`);
+      doc.fontSize(12).text(`Retiros Totales: $${closure.totalWithdrawals}`);
+      doc.fontSize(12).text(`Balance Final en Caja: $${closure.finalCash}`);
+      doc.moveDown();
+    });
+  }
+
+  // Lista de ventas con detalle
+  doc.fontSize(14).text('Detalle de Ventas:');
+  if (dailySales.length === 0) {
+    doc.fontSize(12).text('No se registraron ventas.');
+  } else {
+    dailySales.forEach((sale, idx) => {
+      doc.fontSize(12).text(
+        `${idx + 1}. Fecha: ${new Date(sale.date).toLocaleString()} - Total: $${sale.total} - Método de Pago: ${sale.paymentMethod}`
+      );
       sale.products.forEach((product) => {
-        doc.text(`   - ${product.quantity}x ${product.name} ($${product.total})`);
+        doc.fontSize(12).text(`   - ${product.quantity}x ${product.name} ($${product.total})`);
       });
       doc.moveDown();
     });

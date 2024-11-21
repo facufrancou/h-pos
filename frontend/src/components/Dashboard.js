@@ -167,6 +167,9 @@ function Dashboard() {
         >
           Salida de Fondos
         </button>
+        <button className="btn btn-success" onClick={downloadDailyReport}>
+          Descargar Reporte Diario
+        </button>
         <button
           className="btn btn-warning"
           onClick={() => setShowConfirmXModal(true)} // Mostrar el modal de confirmación para cierre X
@@ -179,9 +182,7 @@ function Dashboard() {
         >
           Cierre Total (Z)
         </button>
-        <button className="btn btn-success" onClick={downloadDailyReport}>
-          Descargar Reporte Diario
-        </button>
+       
       </div>
 
       <ProductTable

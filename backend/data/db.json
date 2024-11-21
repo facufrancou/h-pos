@@ -239,93 +239,11 @@
   "initialCash": {
     "amount": 0,
     "operator": "Sistema",
-    "date": ""
+    "date": "2024-11-21T00:44:10.516Z"
   },
   "withdrawals": [],
   "closures": [
-    {
-      "closureNumber": 1,
-      "date": "2024-11-21T00:08:54.024Z",
-      "type": "X",
-      "totalSales": 0,
-      "paymentMethodTotals": {},
-      "totalWithdrawals": 1000,
-      "withdrawalDetails": [
-        {
-          "operator": "Fabri",
-          "amount": 1000,
-          "date": "2024-11-21T00:08:50.492Z"
-        }
-      ],
-      "initialCash": 2000,
-      "cashInBox": 1000,
-      "moneyInAccount": 0,
-      "finalCash": 1000
-    },
-    {
-      "closureNumber": 2,
-      "date": "2024-11-21T00:10:46.272Z",
-      "type": "X",
-      "totalSales": 0,
-      "paymentMethodTotals": {},
-      "totalWithdrawals": 1000,
-      "withdrawalDetails": [
-        {
-          "operator": "Fabri",
-          "amount": 1000,
-          "date": "2024-11-21T00:08:50.492Z"
-        }
-      ],
-      "initialCash": 1000,
-      "cashInBox": 0,
-      "moneyInAccount": 0,
-      "finalCash": 0
-    },
-    {
-      "closureNumber": 3,
-      "date": "2024-11-21T00:10:54.554Z",
-      "type": "Z",
-      "totalSales": 0,
-      "paymentMethodTotals": {},
-      "totalWithdrawals": 1000,
-      "withdrawalDetails": [
-        {
-          "operator": "Fabri",
-          "amount": 1000,
-          "date": "2024-11-21T00:08:50.492Z"
-        }
-      ],
-      "initialCash": 0,
-      "cashInBox": -1000,
-      "moneyInAccount": 0,
-      "finalCash": -1000
-    },
-    {
-      "closureNumber": 4,
-      "date": "2024-11-21T00:11:10.434Z",
-      "type": "X",
-      "totalSales": 0,
-      "paymentMethodTotals": {},
-      "totalWithdrawals": 0,
-      "withdrawalDetails": [],
-      "initialCash": 0,
-      "cashInBox": 0,
-      "moneyInAccount": 0,
-      "finalCash": 0
-    },
-    {
-      "closureNumber": 5,
-      "date": "2024-11-21T00:11:13.408Z",
-      "type": "Z",
-      "totalSales": 0,
-      "paymentMethodTotals": {},
-      "totalWithdrawals": 0,
-      "withdrawalDetails": [],
-      "initialCash": 0,
-      "cashInBox": 0,
-      "moneyInAccount": 0,
-      "finalCash": 0
-    }
+   
   ],
-  "closureCount": 5
+  "closureCount": 0
 }
