@@ -10,6 +10,8 @@ function InitialCashModal({ show, onClose, handleConfirm }) {
       return;
     }
     handleConfirm({ initialCash, operator });
+    setInitialCash(''); // Limpiar campo de monto inicial
+    setOperator('');    // Limpiar campo de operador
     onClose();
   };
 

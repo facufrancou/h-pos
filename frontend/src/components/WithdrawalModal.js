@@ -10,6 +10,8 @@ function WithdrawalModal({ show, onClose, handleConfirm }) {
       return;
     }
     handleConfirm({ amount, operator });
+    setAmount(''); // Limpiar campo de monto
+    setOperator(''); // Limpiar campo de operador
     onClose();
   };
 
