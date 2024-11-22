@@ -37,6 +37,14 @@ function Dashboard() {
   }, []);
 
   const handleConfirmSale = (paymentMethod) => {
+    // Función para obtener la fecha ajustada a la hora local sin el sufijo 'Z'
+    const getLocalISOString = () => {
+      const now = new Date();
+      const offset = now.getTimezoneOffset() * 60000; // Convertir desfase de minutos a milisegundos
+      const localTime = new Date(now.getTime() - offset); // Ajustar el tiempo local
+      return localTime.toISOString().slice(0, -1); // Remover el sufijo 'Z'
+    };
+  
     const sale = {
       products: selectedProducts.map((product) => ({
         id: product.id,
@@ -60,9 +68,9 @@ function Dashboard() {
             : product.price;
         return sum + price * product.quantity;
       }, 0),
-      date: new Date().toISOString(),
+      date: getLocalISOString(), // Usar la fecha ajustada en formato sin 'Z'
     };
-
+  
     createSale(sale)
       .then(() => {
         alert("Venta registrada con éxito");
@@ -70,7 +78,8 @@ function Dashboard() {
       })
       .catch((error) => console.error("Error al registrar la venta:", error));
   };
-
+  
+  
   const handleInitialCash = async (data) => {
     try {
       await fetch("http://localhost:5000/sales/initial-cash", {

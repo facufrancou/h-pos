@@ -239,68 +239,23 @@
     {
       "products": [
         {
-          "id": 111,
-          "name": "1 Kilo",
-          "price": "9500",
-          "quantity": 2,
-          "total": 19000
+          "id": 132,
+          "name": "POCHOCLO Familiar",
+          "price": 400,
+          "quantity": 3,
+          "total": 1200
         }
       ],
-      "paymentMethod": "Efectivo",
-      "total": 19000,
-      "date": "2024-11-21T15:15:06.518Z"
-    },
-    {
-      "products": [
-        {
-          "id": 113,
-          "name": "1/4 Kilo",
-          "price": 3200,
-          "quantity": 1,
-          "total": 3200
-        }
-      ],
-      "paymentMethod": "App Delivery",
-      "total": 3200,
-      "date": "2024-11-21T15:15:15.147Z"
+      "paymentMethod": "Debito",
+      "total": 1200,
+      "date": "2024-11-22T01:29:27.173",
+      "shift": 7
     }
   ],
-  "initialCash": {
-    "amount": 64000,
-    "operator": "Sistema",
-    "date": "2024-11-21T15:15:18.429Z"
-  },
-  "withdrawals": [
-    {
-      "amount": 5000,
-      "operator": "Fabri",
-      "date": "2024-11-21T15:14:51.322Z"
-    }
-  ],
-  "closures": [
-    {
-      "closureNumber": 1,
-      "date": "2024-11-21T15:15:18.429Z",
-      "type": "X",
-      "totalSales": 22200,
-      "paymentMethodTotals": {
-        "Efectivo": 19000,
-        "App Delivery": 3200
-      },
-      "totalWithdrawals": 5000,
-      "withdrawalDetails": [
-        {
-          "operator": "Fabri",
-          "amount": 5000,
-          "date": "2024-11-21T15:14:51.322Z"
-        }
-      ],
-      "initialCash": 50000,
-      "cashInBox": 64000,
-      "moneyInAccount": 3200,
-      "finalCash": 67200
-    }
-  ],
-  "closureCount": 1,
-  "currentTurn": {}
+  "initialCash": null,
+  "withdrawals": [],
+  "closures": [],
+  "closureCount": 0,
+  "currentTurn": {},
+  "currentShift": 7
 }

@@ -1,34 +1,41 @@
-const express = require("express");
+const express = require('express');
 const {
   createSale,
   getSalesByDateRange,
-} = require("../controllers/salesController");
-const {
+  closeShift,
   setInitialCash,
   recordWithdrawal,
-  closeShift,
   generateInitialCashPDF,
   generateWithdrawalPDF,
   generateCloseShiftPDF,
   generateDailyReportPDF,
-  getClosures,
-} = require("../controllers/salesController");
+  getHistoricalSales,
+  getHistoricalWithdrawals,
+  getHistoricalClosures,
+} = require('../controllers/salesController');
+
 const router = express.Router();
 
 // Ruta para crear una venta
-router.post("/", createSale);
+router.post('/', createSale);
 
 // Ruta para obtener ventas por rango de fechas
-router.get("/date-range", getSalesByDateRange);
+router.get('/date-range', getSalesByDateRange);
 
-router.post("/initial-cash", setInitialCash);
-router.post("/withdrawals", recordWithdrawal);
-router.get("/close-shift", closeShift);
-router.post("/pdf/initial-cash", generateInitialCashPDF);
-router.post("/pdf/withdrawal", generateWithdrawalPDF);
-router.post("/pdf/close-shift", generateCloseShiftPDF);
+// Rutas para caja
+router.post('/initial-cash', setInitialCash);
+router.post('/withdrawals', recordWithdrawal);
+router.get('/close-shift', closeShift);
 
-router.get("/pdf/daily-report", generateDailyReportPDF);
-router.get("/closures", getClosures); // Nueva ruta para consultar cierres
+// Rutas para generar PDFs
+router.post('/pdf/initial-cash', generateInitialCashPDF);
+router.post('/pdf/withdrawal', generateWithdrawalPDF);
+router.post('/pdf/close-shift', generateCloseShiftPDF);
+router.get('/pdf/daily-report', generateDailyReportPDF);
+
+// Rutas para consultar datos históricos
+router.get('/history/sales', getHistoricalSales);
+router.get('/history/withdrawals', getHistoricalWithdrawals);
+router.get('/history/closures', getHistoricalClosures);
 
 module.exports = router;
