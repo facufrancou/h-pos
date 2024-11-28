@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const PDFDocument = require('pdfkit');
-const dbPath = path.join(__dirname, '../data/db.json');
-const historyPath = path.join(__dirname, '../data/historical.json');
+const fs = require("fs");
+const path = require("path");
+const PDFDocument = require("pdfkit");
+const dbPath = path.join(__dirname, "../data/db.json");
+const historyPath = path.join(__dirname, "../data/historical.json");
 
 const filterByDateRange = (data, startDate, endDate) => {
   const start = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : null;
@@ -25,13 +25,15 @@ const getLocalISOString = () => {
 const loadDatabase = () => JSON.parse(fs.readFileSync(dbPath));
 
 // Función para guardar la base de datos activa
-const saveDatabase = (db) => fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+const saveDatabase = (db) =>
+  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
 
 // Función para cargar la base de datos histórica
 const loadHistoricalDatabase = () => JSON.parse(fs.readFileSync(historyPath));
 
 // Función para guardar la base de datos histórica
-const saveHistoricalDatabase = (history) => fs.writeFileSync(historyPath, JSON.stringify(history, null, 2));
+const saveHistoricalDatabase = (history) =>
+  fs.writeFileSync(historyPath, JSON.stringify(history, null, 2));
 
 exports.createSale = (req, res) => {
   const { sale } = req.body;
@@ -43,7 +45,7 @@ exports.createSale = (req, res) => {
   db.sales.push(sale);
 
   saveDatabase(db);
-  res.status(201).json({ message: 'Venta registrada con éxito' });
+  res.status(201).json({ message: "Venta registrada con éxito" });
 };
 exports.closeShift = (req, res) => {
   const db = loadDatabase();
@@ -62,15 +64,18 @@ exports.closeShift = (req, res) => {
   const totalWithdrawals = withdrawals.reduce((sum, w) => sum + w.amount, 0);
 
   // Calcular efectivo y dinero en cuenta
-  const cashMethods = ['Efectivo'];
-  const accountMethods = ['Debito', 'Credito', 'App Delivery', 'Transferencia'];
+  const cashMethods = ["Efectivo"];
+  const accountMethods = ["Debito", "Credito", "App Delivery", "Transferencia"];
 
-  const cashInBox = initialCash.amount + shiftSales.reduce((sum, sale) => {
-    if (cashMethods.includes(sale.paymentMethod)) {
-      return sum + sale.total;
-    }
-    return sum;
-  }, 0) - totalWithdrawals;
+  const cashInBox =
+    initialCash.amount +
+    shiftSales.reduce((sum, sale) => {
+      if (cashMethods.includes(sale.paymentMethod)) {
+        return sum + sale.total;
+      }
+      return sum;
+    }, 0) -
+    totalWithdrawals;
 
   const moneyInAccount = shiftSales.reduce((sum, sale) => {
     if (accountMethods.includes(sale.paymentMethod)) {
@@ -93,7 +98,7 @@ exports.closeShift = (req, res) => {
   const closure = {
     shift: currentShift,
     date: getLocalISOString(), // Fecha ajustada a la hora local
-    type: req.query.reset ? 'Z' : 'X',
+    type: req.query.reset ? "Z" : "X",
     totalSales,
     salesDetails: shiftSales,
     totalWithdrawals,
@@ -124,7 +129,11 @@ exports.closeShift = (req, res) => {
   } else {
     // Si es cierre X, actualizar el fondo inicial
     db.sales = db.sales.filter((sale) => sale.shift !== currentShift);
-    db.initialCash = { amount: cashInBox, operator: 'Sistema', date: getLocalISOString() }; // Ajustar la fecha a la zona horaria local
+    db.initialCash = {
+      amount: cashInBox,
+      operator: "Sistema",
+      date: getLocalISOString(),
+    }; // Ajustar la fecha a la zona horaria local
   }
 
   // Incrementar el turno actual
@@ -138,7 +147,9 @@ exports.getHistoricalSales = (req, res) => {
   const { startDate, endDate } = req.query;
 
   if (!startDate || !endDate) {
-    return res.status(400).json({ message: 'Por favor, proporcione las fechas de inicio y fin' });
+    return res
+      .status(400)
+      .json({ message: "Por favor, proporcione las fechas de inicio y fin" });
   }
 
   // Función para ajustar cualquier fecha a la hora local
@@ -166,7 +177,9 @@ exports.getHistoricalWithdrawals = (req, res) => {
   const { startDate, endDate } = req.query;
 
   if (!startDate || !endDate) {
-    return res.status(400).json({ message: 'Por favor, proporcione las fechas de inicio y fin' });
+    return res
+      .status(400)
+      .json({ message: "Por favor, proporcione las fechas de inicio y fin" });
   }
 
   // Función para ajustar cualquier fecha a la hora local
@@ -183,10 +196,12 @@ exports.getHistoricalWithdrawals = (req, res) => {
   const history = loadHistoricalDatabase();
 
   // Filtrar los retiros por rango de fechas ajustado a la hora local
-  const filteredWithdrawals = (history.withdrawals || []).filter((withdrawal) => {
-    const withdrawalLocalDate = adjustToLocalTime(withdrawal.date); // Ajustar fecha del retiro
-    return withdrawalLocalDate >= start && withdrawalLocalDate <= end; // Comparar con rango local
-  });
+  const filteredWithdrawals = (history.withdrawals || []).filter(
+    (withdrawal) => {
+      const withdrawalLocalDate = adjustToLocalTime(withdrawal.date); // Ajustar fecha del retiro
+      return withdrawalLocalDate >= start && withdrawalLocalDate <= end; // Comparar con rango local
+    }
+  );
 
   res.status(200).json(filteredWithdrawals);
 };
@@ -194,7 +209,9 @@ exports.getHistoricalClosures = (req, res) => {
   const { startDate, endDate } = req.query;
 
   if (!startDate || !endDate) {
-    return res.status(400).json({ message: 'Por favor, proporcione las fechas de inicio y fin' });
+    return res
+      .status(400)
+      .json({ message: "Por favor, proporcione las fechas de inicio y fin" });
   }
 
   // Función para ajustar cualquier fecha a la hora local
@@ -220,10 +237,12 @@ exports.getHistoricalClosures = (req, res) => {
 };
 exports.getSalesByDateRange = (req, res) => {
   const { startDate, endDate } = req.query;
-  console.log(startDate)
+  console.log(startDate);
 
   if (!startDate || !endDate) {
-    return res.status(400).json({ message: 'Por favor, proporcione las fechas de inicio y fin' });
+    return res
+      .status(400)
+      .json({ message: "Por favor, proporcione las fechas de inicio y fin" });
   }
 
   // Convertir las fechas de inicio y fin al inicio y fin del día
@@ -239,7 +258,9 @@ exports.getSalesByDateRange = (req, res) => {
   const filteredSales = db.sales.filter((sale) => {
     // Ajustar la fecha de la venta a la hora local
     const saleDate = new Date(sale.date);
-    const saleLocalDate = new Date(saleDate.getTime() - saleDate.getTimezoneOffset() * 60000);
+    const saleLocalDate = new Date(
+      saleDate.getTime() - saleDate.getTimezoneOffset() * 60000
+    );
 
     // Comparar fechas
     return saleLocalDate >= start && saleLocalDate <= end;
@@ -270,7 +291,7 @@ exports.setInitialCash = (req, res) => {
   fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
 
   // Responder al cliente
-  res.status(200).json({ message: 'Fondo de caja registrado exitosamente' });
+  res.status(200).json({ message: "Fondo de caja registrado exitosamente" });
 };
 exports.generateInitialCashPDF = (req, res) => {
   const { initialCash, operator } = req.body;
@@ -280,7 +301,7 @@ exports.generateInitialCashPDF = (req, res) => {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000; // Convertir desfase de minutos a milisegundos
     const localTime = new Date(now.getTime() - offset); // Ajustar el tiempo local
-    return localTime.toISOString().replace(/[:.]/g, '-'); // Ajustar formato para nombre del archivo
+    return localTime.toISOString().replace(/[:.]/g, "-"); // Ajustar formato para nombre del archivo
   };
 
   // Función para obtener una fecha legible para el contenido del PDF
@@ -291,12 +312,12 @@ exports.generateInitialCashPDF = (req, res) => {
   const doc = new PDFDocument();
   const filename = `Fondo_Inicial_${getLocalISOString()}.pdf`; // Fecha ajustada en el nombre del archivo
 
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
 
   doc.pipe(res);
 
-  doc.fontSize(20).text('Comprobante de Fondo Inicial', { align: 'center' });
+  doc.fontSize(20).text("Comprobante de Fondo Inicial", { align: "center" });
   doc.moveDown();
   doc.fontSize(14).text(`Fecha: ${getLocalReadableDate()}`); // Fecha legible en hora local
   doc.text(`Operador: ${operator}`);
@@ -325,13 +346,11 @@ exports.recordWithdrawal = (req, res) => {
     date: getLocalISOString(), // Guardar la fecha ajustada a la hora local
   });
 
-  
-
   // Guardar los datos actualizados en el archivo
   fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
 
   // Enviar la respuesta al cliente
-  res.status(200).json({ message: 'Retiro registrado exitosamente' });
+  res.status(200).json({ message: "Retiro registrado exitosamente" });
 };
 exports.generateWithdrawalPDF = (req, res) => {
   const { amount, operator } = req.body;
@@ -341,7 +360,7 @@ exports.generateWithdrawalPDF = (req, res) => {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000; // Convertir desfase de minutos a milisegundos
     const localTime = new Date(now.getTime() - offset); // Ajustar el tiempo local
-    return localTime.toISOString().replace(/[:.]/g, '-'); // Ajustar formato para nombre del archivo
+    return localTime.toISOString().replace(/[:.]/g, "-"); // Ajustar formato para nombre del archivo
   };
 
   // Función para obtener una fecha legible para el contenido del PDF
@@ -352,12 +371,12 @@ exports.generateWithdrawalPDF = (req, res) => {
   const doc = new PDFDocument();
   const filename = `Retiro_${getLocalISOString()}.pdf`; // Fecha ajustada en el nombre del archivo
 
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
 
   doc.pipe(res);
 
-  doc.fontSize(20).text('Comprobante de Retiro', { align: 'center' });
+  doc.fontSize(20).text("Comprobante de Retiro", { align: "center" });
   doc.moveDown();
   doc.fontSize(14).text(`Fecha: ${getLocalReadableDate()}`); // Fecha legible en hora local
   doc.text(`Operador: ${operator}`);
@@ -374,7 +393,7 @@ exports.generateCloseShiftPDF = (req, res) => {
     cashInBox = 0,
     moneyInAccount = 0,
     finalCash = 0,
-    type = 'X',
+    type = "X",
   } = req.body;
 
   // Función para obtener la fecha ajustada a la hora local
@@ -382,7 +401,7 @@ exports.generateCloseShiftPDF = (req, res) => {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000; // Convertir desfase de minutos a milisegundos
     const localTime = new Date(now.getTime() - offset); // Ajustar el tiempo local
-    return localTime.toISOString().replace(/[:.]/g, '-'); // Ajustar formato para nombre del archivo
+    return localTime.toISOString().replace(/[:.]/g, "-"); // Ajustar formato para nombre del archivo
   };
 
   // Función para obtener una fecha legible para el contenido del PDF
@@ -393,21 +412,21 @@ exports.generateCloseShiftPDF = (req, res) => {
   const doc = new PDFDocument();
   const filename = `Cierre_${type}_${getLocalISOString()}.pdf`; // Fecha ajustada en el nombre del archivo
 
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
 
   doc.pipe(res);
 
-  doc.fontSize(20).text(`Comprobante de Cierre ${type}`, { align: 'center' });
+  doc.fontSize(20).text(`Comprobante de Cierre ${type}`, { align: "center" });
   doc.moveDown();
   doc.fontSize(14).text(`Fecha: ${getLocalReadableDate()}`); // Fecha legible en hora local
   doc.text(`Fondo Inicial: $${initialCash}`);
   doc.text(`Ventas Totales: $${totalSales}`);
   doc.moveDown();
 
-  doc.text('Desglose por Método de Pago:', { underline: true });
+  doc.text("Desglose por Método de Pago:", { underline: true });
   if (Object.keys(paymentMethodTotals).length === 0) {
-    doc.text('No se registraron ventas.');
+    doc.text("No se registraron ventas.");
   } else {
     Object.entries(paymentMethodTotals).forEach(([method, total]) => {
       doc.text(`${method}: $${total}`);
@@ -418,19 +437,23 @@ exports.generateCloseShiftPDF = (req, res) => {
   doc.text(`Retiros Totales: $${totalWithdrawals}`);
   doc.moveDown();
 
-  doc.text('Arqueo Parcial:', { underline: true });
+  doc.text("Arqueo Parcial:", { underline: true });
   doc.text(`Efectivo en Caja: $${cashInBox}`);
   doc.text(`Dinero en Cuenta: $${moneyInAccount}`);
   doc.text(`Total Final: $${finalCash}`);
   doc.moveDown();
 
-  doc.text('Detalle de Retiros:', { underline: true });
+  doc.text("Detalle de Retiros:", { underline: true });
   if (withdrawalDetails.length === 0) {
-    doc.text('No se registraron retiros durante el turno.');
+    doc.text("No se registraron retiros durante el turno.");
   } else {
     withdrawalDetails.forEach((withdrawal, index) => {
       doc.text(
-        `${index + 1}. ${new Date(withdrawal.date).toLocaleString()} - Operador: ${withdrawal.operator} - Monto: $${withdrawal.amount}`
+        `${index + 1}. ${new Date(
+          withdrawal.date
+        ).toLocaleString()} - Operador: ${withdrawal.operator} - Monto: $${
+          withdrawal.amount
+        }`
       ); // Fecha legible en hora local
     });
   }
@@ -439,16 +462,20 @@ exports.generateCloseShiftPDF = (req, res) => {
 };
 exports.generateDailyReportPDF = (req, res) => {
   const db = JSON.parse(fs.readFileSync(dbPath));
-  const sales = db.sales || [];
+  const history = JSON.parse(fs.readFileSync(historyPath));
+  const sales = [...(db.sales || []), ...(history.sales || [])]; // Fusionar ventas de db y history
   const withdrawals = db.withdrawals || [];
   const closures = db.closures || [];
+
+  
+ 
 
   // Función para obtener la fecha local en formato ISO (sin desfase UTC)
   const getLocalISOString = () => {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000; // Convertir desfase de minutos a milisegundos
     const localTime = new Date(now.getTime() - offset); // Ajustar el tiempo local
-    return localTime.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    return localTime.toISOString().split("T")[0]; // Formato YYYY-MM-DD
   };
 
   // Función para obtener una fecha legible para el contenido del PDF
@@ -459,11 +486,25 @@ exports.generateDailyReportPDF = (req, res) => {
   // Fecha local del día actual
   const today = getLocalISOString(); // Fecha en formato YYYY-MM-DD
   const dailySales = sales.filter((sale) => sale.date.startsWith(today));
-  const dailyClosures = closures.filter((closure) => closure.date.startsWith(today));
-  const dailyWithdrawals = withdrawals.filter((withdrawal) => withdrawal.date.startsWith(today));
+  const dailyClosures = history.closures.filter((closure) =>
+    closure.date.startsWith(today)
+  );
+  const dailyWithdrawals = withdrawals.filter((withdrawal) =>
+    withdrawal.date.startsWith(today)
+  );
+  
+  // Verificar si hay un cierre Z en el día
+  const zClosures = history.closures.filter(
+    (closure) => closure.date.startsWith(today) && closure.type === "Z"
+  );
 
+
+  
   // Calcular totales
-  const totalSalesAmount = dailySales.reduce((sum, sale) => sum + sale.total, 0);
+  const totalSalesAmount = dailySales.reduce(
+    (sum, sale) => sum + sale.total,
+    0
+  );
   const totalSalesCount = dailySales.length;
 
   const paymentMethodTotals = dailySales.reduce((acc, sale) => {
@@ -471,80 +512,117 @@ exports.generateDailyReportPDF = (req, res) => {
     return acc;
   }, {});
 
-  const totalWithdrawalsAmount = dailyWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+  const totalWithdrawalsAmount = dailyWithdrawals.reduce(
+    (sum, w) => sum + w.amount,
+    0
+  );
 
   // Crear el documento PDF
   const doc = new PDFDocument();
   const filename = `Reporte_Diario_${today}.pdf`;
 
-  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  res.setHeader('Content-Type', 'application/pdf');
+ /*  if (zClosures.length > 0) {
+    const lastZClosure = zClosures[zClosures.length - 1];
+    doc.fontSize(14).text('Reporte Diario Cerrado', { align: 'center' });
+    doc.fontSize(12).text(
+        `Se realizó un cierre Z el ${new Date(lastZClosure.date).toLocaleString()}. No hay más información disponible para el día.`,
+        { align: 'center' }
+    );
+    doc.end();
+    return; // Detener la generación del reporte
+} */
+
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.setHeader("Content-Type", "application/pdf");
 
   doc.pipe(res);
 
   // Encabezado
-  doc.fontSize(18).text('Reporte Diario', { align: 'center' });
-  doc.fontSize(12).text(`Fecha: ${getLocalReadableDate()}`, { align: 'center' }); // Fecha legible
+  doc.fontSize(18).text("Reporte Diario", { align: "center" });
+  doc
+    .fontSize(12)
+    .text(`Fecha: ${getLocalReadableDate()}`, { align: "center" }); // Fecha legible
   doc.moveDown();
 
   // Totales generales
-  doc.fontSize(14).text('Totales Generales:');
+  doc.fontSize(14).text("Totales Generales:");
   doc.fontSize(12).text(`Total de Ventas: ${totalSalesCount} ventas`);
   doc.fontSize(12).text(`Monto Total de Ventas: $${totalSalesAmount}`);
   doc.moveDown();
 
   // Desglose por método de pago
-  doc.fontSize(14).text('Desglose por Método de Pago:');
+  doc.fontSize(14).text("Desglose por Método de Pago:");
   Object.entries(paymentMethodTotals).forEach(([method, total]) => {
     doc.fontSize(12).text(`${method}: $${total}`);
   });
   doc.moveDown();
 
   // Total de retiros
-  doc.fontSize(14).text('Retiros Totales:');
+  doc.fontSize(14).text("Retiros Totales:");
   doc.fontSize(12).text(`Monto Total de Retiros: $${totalWithdrawalsAmount}`);
   doc.moveDown();
 
   // Detalle de Retiros
-  doc.fontSize(14).text('Detalle de Retiros:');
+  doc.fontSize(14).text("Detalle de Retiros:");
   if (dailyWithdrawals.length === 0) {
-    doc.fontSize(12).text('No se registraron retiros.');
+    doc.fontSize(12).text("No se registraron retiros.");
   } else {
     dailyWithdrawals.forEach((withdrawal, idx) => {
-      doc.fontSize(12).text(
-        `${idx + 1}. Fecha: ${withdrawal.date} - Operador: ${withdrawal.operator} - Monto: $${withdrawal.amount}`
-      );
+      doc
+        .fontSize(12)
+        .text(
+          `${idx + 1}. Fecha: ${withdrawal.date} - Operador: ${
+            withdrawal.operator
+          } - Monto: $${withdrawal.amount}`
+        );
     });
   }
   doc.moveDown();
 
-  // Balance por cierre
-  doc.fontSize(14).text('Balance por Cierre de Turno:');
+  doc.fontSize(14).text("Balance por Cierre de Turno:");
   if (dailyClosures.length === 0) {
-    doc.fontSize(12).text('No se registraron cierres de turno.');
+    doc.fontSize(12).text("No se registraron cierres de turno.");
   } else {
-    dailyClosures.forEach((closure) => {
-      doc.fontSize(12).text(
-        `Cierre N°${closure.closureNumber} - ${closure.type} - Fecha: ${new Date(closure.date).toLocaleString()}`
-      );
-      doc.fontSize(12).text(`Ventas Totales: $${closure.totalSales}`);
-      doc.fontSize(12).text(`Retiros Totales: $${closure.totalWithdrawals}`);
-      doc.fontSize(12).text(`Balance Final en Caja: $${closure.finalCash}`);
+    dailyClosures.forEach((closure, index) => {
+      doc
+        .fontSize(12)
+        .text(
+          `${index + 1}. Cierre N°${
+            closure.closureNumber || index + 1
+          } - Tipo: ${closure.type} - Fecha: ${new Date(
+            closure.date
+          ).toLocaleString()}`
+        );
+      doc.fontSize(12).text(`  - Ventas Totales: $${closure.totalSales || 0}`);
+      doc
+        .fontSize(12)
+        .text(`  - Retiros Totales: $${closure.totalWithdrawals || 0}`);
+      doc
+        .fontSize(12)
+        .text(`  - Balance Final en Caja: $${closure.finalCash || 0}`);
       doc.moveDown();
     });
   }
 
   // Lista de ventas con detalle
-  doc.fontSize(14).text('Detalle de Ventas:');
+  doc.fontSize(14).text("Detalle de Ventas:");
   if (dailySales.length === 0) {
-    doc.fontSize(12).text('No se registraron ventas.');
+    doc.fontSize(12).text("No se registraron ventas.");
   } else {
     dailySales.forEach((sale, idx) => {
-      doc.fontSize(12).text(
-        `${idx + 1}. Fecha: ${sale.date} - Total: $${sale.total} - Método de Pago: ${sale.paymentMethod}`
-      );
+      doc
+        .fontSize(12)
+        .text(
+          `${idx + 1}. Fecha: ${sale.date} - Total: $${
+            sale.total
+          } - Método de Pago: ${sale.paymentMethod}`
+        );
       sale.products.forEach((product) => {
-        doc.fontSize(12).text(`   - ${product.quantity}x ${product.name} ($${product.total})`);
+        doc
+          .fontSize(12)
+          .text(
+            `   - ${product.quantity}x ${product.name} ($${product.total})`
+          );
       });
       doc.moveDown();
     });
@@ -552,6 +630,7 @@ exports.generateDailyReportPDF = (req, res) => {
 
   doc.end();
 };
+
 exports.getClosures = (req, res) => {
   const db = JSON.parse(fs.readFileSync(dbPath));
   const closures = db.closures || [];

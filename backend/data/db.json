@@ -235,27 +235,11 @@
       "priceAlt": 1900
     }
   ],
-  "sales": [
-    {
-      "products": [
-        {
-          "id": 132,
-          "name": "POCHOCLO Familiar",
-          "price": 400,
-          "quantity": 3,
-          "total": 1200
-        }
-      ],
-      "paymentMethod": "Debito",
-      "total": 1200,
-      "date": "2024-11-22T01:29:27.173",
-      "shift": 7
-    }
-  ],
+  "sales": [],
   "initialCash": null,
   "withdrawals": [],
   "closures": [],
   "closureCount": 0,
   "currentTurn": {},
-  "currentShift": 7
+  "currentShift": 8
 }

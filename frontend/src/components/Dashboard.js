@@ -125,6 +125,7 @@ function Dashboard() {
         finalCash: data.finalCash || 0,
         withdrawalDetails: data.withdrawalDetails || [],
       });
+      console.log(data.closureNumber);
       setShowCloseShiftModal(true);
     } catch (error) {
       console.error("Error al realizar el cierre:", error);
@@ -231,7 +232,7 @@ function Dashboard() {
       <div className="modal-content">
         <div className="modal-header">
           <h5>
-            Resumen del Cierre {closeShiftData.type} - N° {closeShiftData.closureNumber}
+            Resumen del Cierre {closeShiftData.type} {/* - N° {closeShiftData.closureNumber} */}
           </h5>
           <button
             className="btn-close"
@@ -246,7 +247,7 @@ function Dashboard() {
               : "N/A"}
           </p>
           <p>
-            <strong>Número de Cierre:</strong> {closeShiftData.closureNumber || 0}
+            {/* <strong>Número de Cierre:</strong> {closeShiftData.closureNumber || 0} */}
           </p>
           <p>
             <strong>Fondo Inicial:</strong> $ {closeShiftData.initialCash || 0}

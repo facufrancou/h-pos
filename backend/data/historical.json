@@ -149,6 +149,118 @@
       "total": 300,
       "date": "2024-11-22T01:19:15.562Z",
       "shift": 5
+    },
+    {
+      "products": [
+        {
+          "id": 132,
+          "name": "POCHOCLO Familiar",
+          "price": 400,
+          "quantity": 3,
+          "total": 1200
+        }
+      ],
+      "paymentMethod": "Debito",
+      "total": 1200,
+      "date": "2024-11-22T01:29:27.173",
+      "shift": 7
+    },
+    {
+      "products": [
+        {
+          "id": 111,
+          "name": "1 Kilo",
+          "price": "9500",
+          "quantity": 1,
+          "total": 9500
+        }
+      ],
+      "paymentMethod": "Debito",
+      "total": 9500,
+      "date": "2024-11-27T19:40:17.764",
+      "shift": 7
+    },
+    {
+      "products": [
+        {
+          "id": 113,
+          "name": "1/4 Kilo",
+          "price": 2900,
+          "quantity": 1,
+          "total": 2900
+        }
+      ],
+      "paymentMethod": "Transferencia",
+      "total": 2900,
+      "date": "2024-11-27T19:40:25.155",
+      "shift": 7
+    },
+    {
+      "products": [
+        {
+          "id": 112,
+          "name": "1/2 Kilo",
+          "price": "7500",
+          "quantity": 3,
+          "total": 22500
+        }
+      ],
+      "paymentMethod": "App Delivery",
+      "total": 22500,
+      "date": "2024-11-27T19:57:58.591",
+      "shift": 8
+    },
+    {
+      "products": [
+        {
+          "id": 111,
+          "name": "1 Kilo",
+          "price": "9500",
+          "quantity": 3,
+          "total": 28500
+        }
+      ],
+      "paymentMethod": "Efectivo",
+      "total": 28500,
+      "date": "2024-11-27T19:59:17.284",
+      "shift": 9
+    },
+    {
+      "products": [
+        {
+          "id": "000",
+          "name": "agua",
+          "price": 1223,
+          "quantity": 1,
+          "total": 1223
+        }
+      ],
+      "paymentMethod": "Efectivo",
+      "total": 1223,
+      "date": "2024-11-27T23:08:53.074",
+      "shift": 15
+    },
+    {
+      "products": [
+        {
+          "id": 112,
+          "name": "1/2 Kilo",
+          "price": "7000",
+          "quantity": 1,
+          "total": 7000
+        },
+        {
+          "id": "000",
+          "name": "Agua Caliente",
+          "price": 1000,
+          "quantity": 1,
+          "total": 1000
+        }
+      ],
+      "paymentMethod": "Debito",
+      "total": 8000,
+      "date": "2024-11-27T23:15:18.166",
+      "shift": 16
     }
   ],
   "withdrawals": [
@@ -181,249 +293,379 @@
       "amount": 5000,
       "operator": "Facu",
       "date": "2024-11-22T01:19:26.570"
+    },
+    {
+      "amount": 30999,
+      "operator": "Facu",
+      "date": "2024-11-27T19:39:59.896"
+    },
+    {
+      "amount": 30999,
+      "operator": "Facu",
+      "date": "2024-11-27T19:39:59.896"
+    },
+    {
+      "amount": 23133,
+      "operator": "facu",
+      "date": "2024-11-27T19:57:51.283"
+    },
+    {
+      "amount": 30999,
+      "operator": "Facu",
+      "date": "2024-11-27T19:39:59.896"
+    },
+    {
+      "amount": 23133,
+      "operator": "facu",
+      "date": "2024-11-27T19:57:51.283"
+    },
+    {
+      "amount": 30999,
+      "operator": "Facu",
+      "date": "2024-11-27T19:39:59.896"
+    },
+    {
+      "amount": 23133,
+      "operator": "facu",
+      "date": "2024-11-27T19:57:51.283"
     }
   ],
   "closures": [
     {
-      "shift": 1,
-      "date": "2024-11-22T00:16:00.619",
+      "shift": 10,
+      "date": "2024-11-27T20:00:22.752",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 54132,
+      "withdrawalDetails": [
+        {
+          "operator": "Facu",
+          "amount": 30999,
+          "date": "2024-11-27T19:39:59.896"
+        },
+        {
+          "operator": "facu",
+          "amount": 23133,
+          "date": "2024-11-27T19:57:51.283"
+        }
+      ],
+      "initialCash": -60763,
+      "cashInBox": -114895,
+      "moneyInAccount": 0,
+      "finalCash": -114895
+    },
+    {
+      "shift": 11,
+      "date": "2024-11-27T20:03:03.770",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 33,
+      "cashInBox": 33,
+      "moneyInAccount": 0,
+      "finalCash": 33
+    },
+    {
+      "shift": 12,
+      "date": "2024-11-27T20:07:26.487",
       "type": "X",
-      "totalSales": 46900,
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 43543,
+      "cashInBox": 43543,
+      "moneyInAccount": 0,
+      "finalCash": 43543
+    },
+    {
+      "shift": 13,
+      "date": "2024-11-27T20:08:43.433",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 43543,
+      "cashInBox": 43543,
+      "moneyInAccount": 0,
+      "finalCash": 43543
+    },
+    {
+      "shift": 14,
+      "date": "2024-11-27T20:08:46.041",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 43543,
+      "cashInBox": 43543,
+      "moneyInAccount": 0,
+      "finalCash": 43543
+    },
+    {
+      "shift": 15,
+      "date": "2024-11-27T23:09:59.328",
+      "type": "X",
+      "totalSales": 1223,
       "salesDetails": [
         {
           "products": [
             {
-              "id": 111,
-              "name": "1 Kilo",
-              "price": "9500",
-              "quantity": 2,
-              "total": 19000
+              "id": "000",
+              "name": "agua",
+              "price": 1223,
+              "quantity": 1,
+              "total": 1223
             }
           ],
-          "paymentMethod": "Debito",
-          "total": 19000,
-          "date": "2024-11-22T00:06:28.514Z",
-          "shift": 1
-        },
+          "paymentMethod": "Efectivo",
+          "total": 1223,
+          "date": "2024-11-27T23:08:53.074",
+          "shift": 15
+        }
+      ],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 1223,
+      "moneyInAccount": 0,
+      "finalCash": 1223
+    },
+    {
+      "shift": 16,
+      "date": "2024-11-27T23:15:42.006",
+      "type": "Z",
+      "totalSales": 8000,
+      "salesDetails": [
         {
           "products": [
             {
               "id": 112,
               "name": "1/2 Kilo",
               "price": "7000",
-              "quantity": 2,
-              "total": 14000
-            }
-          ],
-          "paymentMethod": "Efectivo",
-          "total": 14000,
-          "date": "2024-11-22T00:06:35.015Z",
-          "shift": 1
-        },
-        {
-          "products": [
-            {
-              "id": 113,
-              "name": "1/4 Kilo",
-              "price": 3200,
-              "quantity": 2,
-              "total": 6400
-            }
-          ],
-          "paymentMethod": "App Delivery",
-          "total": 6400,
-          "date": "2024-11-22T00:06:41.079Z",
-          "shift": 1
-        },
-        {
-          "products": [
-            {
-              "id": 21,
-              "name": "CASATA - SUIZO X 8",
-              "price": 7500,
               "quantity": 1,
-              "total": 7500
+              "total": 7000
+            },
+            {
+              "id": "000",
+              "name": "Agua Caliente",
+              "price": 1000,
+              "quantity": 1,
+              "total": 1000
             }
           ],
           "paymentMethod": "Debito",
-          "total": 7500,
-          "date": "2024-11-22T00:12:12.257Z",
-          "shift": 1
-        }
-      ],
-      "totalWithdrawals": 30000,
-      "withdrawalDetails": [
-        {
-          "operator": "Fabri",
-          "amount": 30000,
-          "date": "2024-11-22T00:06:20.354"
-        }
-      ],
-      "initialCash": 50000,
-      "cashInBox": 34000,
-      "moneyInAccount": 32900,
-      "finalCash": 66900
-    },
-    {
-      "shift": 2,
-      "date": "2024-11-22T01:13:15.081",
-      "type": "X",
-      "totalSales": 0,
-      "salesDetails": [],
-      "totalWithdrawals": 50000,
-      "withdrawalDetails": [
-        {
-          "operator": "Fabri",
-          "amount": 30000,
-          "date": "2024-11-22T00:06:20.354"
-        },
-        {
-          "operator": "Facu",
-          "amount": 20000,
-          "date": "2024-11-22T01:12:51.848"
-        }
-      ],
-      "initialCash": 34000,
-      "cashInBox": -16000,
-      "moneyInAccount": 0,
-      "finalCash": -16000
-    },
-    {
-      "shift": 3,
-      "date": "2024-11-22T01:15:49.201",
-      "type": "Z",
-      "totalSales": 0,
-      "salesDetails": [],
-      "totalWithdrawals": 50000,
-      "withdrawalDetails": [
-        {
-          "operator": "Fabri",
-          "amount": 30000,
-          "date": "2024-11-22T00:06:20.354"
-        },
-        {
-          "operator": "Facu",
-          "amount": 20000,
-          "date": "2024-11-22T01:12:51.848"
-        }
-      ],
-      "initialCash": -16000,
-      "cashInBox": -66000,
-      "moneyInAccount": 0,
-      "finalCash": -66000
-    },
-    {
-      "shift": 4,
-      "date": "2024-11-22T01:18:33.296",
-      "type": "X",
-      "totalSales": 15900,
-      "salesDetails": [
-        {
-          "products": [
-            {
-              "id": 111,
-              "name": "1 Kilo",
-              "price": "9500",
-              "quantity": 1,
-              "total": 9500
-            }
-          ],
-          "paymentMethod": "Efectivo",
-          "total": 9500,
-          "date": "2024-11-22T01:17:59.360Z",
-          "shift": 4
-        },
-        {
-          "products": [
-            {
-              "id": 113,
-              "name": "1/4 Kilo",
-              "price": 3200,
-              "quantity": 2,
-              "total": 6400
-            }
-          ],
-          "paymentMethod": "App Delivery",
-          "total": 6400,
-          "date": "2024-11-22T01:18:08.344Z",
-          "shift": 4
+          "total": 8000,
+          "date": "2024-11-27T23:15:18.166",
+          "shift": 16
         }
       ],
       "totalWithdrawals": 0,
       "withdrawalDetails": [],
-      "initialCash": 50000,
-      "cashInBox": 59500,
-      "moneyInAccount": 6400,
-      "finalCash": 65900
+      "initialCash": 1223,
+      "cashInBox": 1223,
+      "moneyInAccount": 8000,
+      "finalCash": 9223
     },
     {
-      "shift": 5,
-      "date": "2024-11-22T01:19:31.923",
+      "shift": 17,
+      "date": "2024-11-27T23:26:37.116",
       "type": "X",
-      "totalSales": 6100,
-      "salesDetails": [
-        {
-          "products": [
-            {
-              "id": 130,
-              "name": "12 Churros",
-              "price": 5800,
-              "quantity": 1,
-              "total": 5800
-            }
-          ],
-          "paymentMethod": "App Delivery",
-          "total": 5800,
-          "date": "2024-11-22T01:19:07.574Z",
-          "shift": 5
-        },
-        {
-          "products": [
-            {
-              "id": 134,
-              "name": "6 MEDIALUNAS",
-              "price": 300,
-              "quantity": 1,
-              "total": 300
-            }
-          ],
-          "paymentMethod": "Debito",
-          "total": 300,
-          "date": "2024-11-22T01:19:15.562Z",
-          "shift": 5
-        }
-      ],
-      "totalWithdrawals": 5000,
-      "withdrawalDetails": [
-        {
-          "operator": "Facu",
-          "amount": 5000,
-          "date": "2024-11-22T01:19:26.570"
-        }
-      ],
-      "initialCash": 59500,
-      "cashInBox": 54500,
-      "moneyInAccount": 6100,
-      "finalCash": 60600
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
     },
     {
-      "shift": 6,
-      "date": "2024-11-22T01:21:00.435",
+      "shift": 18,
+      "date": "2024-11-27T23:26:40.055",
       "type": "Z",
       "totalSales": 0,
       "salesDetails": [],
-      "totalWithdrawals": 5000,
-      "withdrawalDetails": [
-        {
-          "operator": "Facu",
-          "amount": 5000,
-          "date": "2024-11-22T01:19:26.570"
-        }
-      ],
-      "initialCash": 54500,
-      "cashInBox": 49500,
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
       "moneyInAccount": 0,
-      "finalCash": 49500
+      "finalCash": 0
+    },
+    {
+      "shift": 19,
+      "date": "2024-11-27T23:29:03.760",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 20,
+      "date": "2024-11-27T23:29:17.511",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 21,
+      "date": "2024-11-27T23:29:52.674",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 22,
+      "date": "2024-11-27T23:29:56.038",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 23,
+      "date": "2024-11-27T23:30:04.502",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 24,
+      "date": "2024-11-27T23:36:44.541",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 1,
+      "date": "2024-11-27T23:38:46.792",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 2,
+      "date": "2024-11-27T23:39:48.420",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 3,
+      "date": "2024-11-27T23:39:52.313",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 4,
+      "date": "2024-11-27T23:40:35.742",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 5,
+      "date": "2024-11-27T23:40:58.801",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 6,
+      "date": "2024-11-27T23:41:28.590",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 7,
+      "date": "2024-11-27T23:41:34.414",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
     }
   ]
 }
