@@ -261,6 +261,28 @@
       "total": 8000,
       "date": "2024-11-27T23:15:18.166",
       "shift": 16
+    },
+    {
+      "products": [
+        {
+          "id": 111,
+          "name": "1 Kilo",
+          "price": "9500",
+          "quantity": 1,
+          "total": 9500
+        },
+        {
+          "id": "000",
+          "name": "agua caliente",
+          "price": 11,
+          "quantity": 1,
+          "total": 11
+        }
+      ],
+      "paymentMethod": "Efectivo",
+      "total": 9511,
+      "date": "2024-11-27T23:53:13.906",
+      "shift": 10
     }
   ],
   "withdrawals": [
@@ -328,6 +350,21 @@
       "amount": 23133,
       "operator": "facu",
       "date": "2024-11-27T19:57:51.283"
+    },
+    {
+      "amount": 5000,
+      "operator": "facu",
+      "date": "2024-11-27T23:53:43.736"
+    },
+    {
+      "amount": 5000,
+      "operator": "facu",
+      "date": "2024-11-27T23:53:43.736"
+    },
+    {
+      "amount": 5000,
+      "operator": "facu",
+      "date": "2024-11-27T23:53:43.736"
     }
   ],
   "closures": [
@@ -666,6 +703,138 @@
       "cashInBox": 0,
       "moneyInAccount": 0,
       "finalCash": 0
+    },
+    {
+      "shift": 8,
+      "date": "2024-11-27T23:52:03.682",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 9,
+      "date": "2024-11-27T23:52:06.788",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 0,
+      "moneyInAccount": 0,
+      "finalCash": 0
+    },
+    {
+      "shift": 10,
+      "date": "2024-11-27T23:53:18.404",
+      "type": "X",
+      "totalSales": 9511,
+      "salesDetails": [
+        {
+          "products": [
+            {
+              "id": 111,
+              "name": "1 Kilo",
+              "price": "9500",
+              "quantity": 1,
+              "total": 9500
+            },
+            {
+              "id": "000",
+              "name": "agua caliente",
+              "price": 11,
+              "quantity": 1,
+              "total": 11
+            }
+          ],
+          "paymentMethod": "Efectivo",
+          "total": 9511,
+          "date": "2024-11-27T23:53:13.906",
+          "shift": 10
+        }
+      ],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 9511,
+      "moneyInAccount": 0,
+      "finalCash": 9511
+    },
+    {
+      "shift": 11,
+      "date": "2024-11-27T23:53:30.069",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 9511,
+      "cashInBox": 9511,
+      "moneyInAccount": 0,
+      "finalCash": 9511
+    },
+    {
+      "shift": 12,
+      "date": "2024-11-27T23:53:47.134",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 5000,
+      "withdrawalDetails": [
+        {
+          "operator": "facu",
+          "amount": 5000,
+          "date": "2024-11-27T23:53:43.736"
+        }
+      ],
+      "initialCash": 9511,
+      "cashInBox": 4511,
+      "moneyInAccount": 0,
+      "finalCash": 4511
+    },
+    {
+      "shift": 13,
+      "date": "2024-11-27T23:53:58.330",
+      "type": "X",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 5000,
+      "withdrawalDetails": [
+        {
+          "operator": "facu",
+          "amount": 5000,
+          "date": "2024-11-27T23:53:43.736"
+        }
+      ],
+      "initialCash": 4511,
+      "cashInBox": -489,
+      "moneyInAccount": 0,
+      "finalCash": -489
+    },
+    {
+      "shift": 14,
+      "date": "2024-11-27T23:54:07.023",
+      "type": "Z",
+      "totalSales": 0,
+      "salesDetails": [],
+      "totalWithdrawals": 5000,
+      "withdrawalDetails": [
+        {
+          "operator": "facu",
+          "amount": 5000,
+          "date": "2024-11-27T23:53:43.736"
+        }
+      ],
+      "initialCash": -489,
+      "cashInBox": -5489,
+      "moneyInAccount": 0,
+      "finalCash": -5489
     }
   ]
 }

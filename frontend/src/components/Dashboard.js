@@ -162,50 +162,67 @@ function Dashboard() {
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center">Punto de Venta</h1>
+ <h1 className="text-center">Punto de Venta</h1>
 
-      <div className="mb-4 d-flex justify-content-between">
-        <button
-          className="btn btn-success"
-          onClick={() => setShowInitialCashModal(true)}
-        >
-          Registrar Fondo de Caja
-        </button>
-        <button
-          className="btn btn-success"
-          onClick={() => setShowWithdrawalModal(true)}
-        >
-          Salida de Fondos
-        </button>
-        <button className="btn btn-success" onClick={downloadDailyReport}>
-          Descargar Reporte Diario
-        </button>
-        <button
-          className="btn btn-warning"
-          onClick={() => setShowConfirmXModal(true)} // Mostrar el modal de confirmación para cierre X
-        >
-          Cierre Parcial (X)
-        </button>
-        <button
-          className="btn btn-danger"
-          onClick={() => setShowConfirmModal(true)} // Mostrar el modal
-        >
-          Cierre Total (Z)
-        </button>
-       
-      </div>
+{/* Botones Agrupados */}
+<div className="row mb-4">
+  {/* Grupo de Operaciones de Caja */}
+  <div className="col-md-4">
+    <h6 className="text-center">Operaciones de Caja</h6>
+    <button
+      className="btn btn-success w-100 mb-2"
+      onClick={() => setShowInitialCashModal(true)}
+    >
+      Registrar Fondo de Caja
+    </button>
+    <button
+      className="btn btn-success w-100"
+      onClick={() => setShowWithdrawalModal(true)}
+    >
+      Salida de Fondos
+    </button>
+  </div>
 
-      <ProductTable
-        products={products}
-        selectedProducts={selectedProducts}
-        setSelectedProducts={setSelectedProducts}
-      />
-      <button
-        className="btn btn-primary mt-3"
-        onClick={() => setShowSalesModal(true)}
-      >
-        Finalizar Venta
-      </button>
+  {/* Grupo de Reportes */}
+  <div className="col-md-4">
+    <h6 className="text-center">Reportes</h6>
+    <button
+      className="btn btn-primary w-100"
+      onClick={downloadDailyReport}
+    >
+      Descargar Reporte Diario
+    </button>
+  </div>
+
+  {/* Grupo de Cierres */}
+  <div className="col-md-4">
+    <h6 className="text-center">Cierres</h6>
+    <button
+      className="btn btn-warning w-100 mb-2"
+      onClick={() => setShowConfirmXModal(true)}
+    >
+      Cierre Parcial (X)
+    </button>
+    <button
+      className="btn btn-danger w-100"
+      onClick={() => setShowConfirmModal(true)}
+    >
+      Cierre Total (Z)
+    </button>
+  </div>
+</div>
+
+<ProductTable
+  products={products}
+  selectedProducts={selectedProducts}
+  setSelectedProducts={setSelectedProducts}
+/>
+<button
+  className="btn btn-primary mt-3"
+  onClick={() => setShowSalesModal(true)}
+>
+  Finalizar Venta
+</button>
 
       {/* Modales */}
       <SalesModal
