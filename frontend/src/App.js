@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
-import SalesByDate from './components/SalesByDate';
-import Config from './components/Config';
-import HistoricalReports from './components/HistoricalReports';
+import ClientManagement from './components/ClientManagement';
+import ProductManagement from './components/ProductManagement';
+import SalesManagement from './components/SalesManagement';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Importa el JS de Bootstrap
 
@@ -15,10 +15,10 @@ function App() {
       <div className="container mt-4">
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/sales-by-date" element={<SalesByDate />} />
+          <Route path="/clients" element={<ClientManagement />} />
           <Route path="/reportes" element={<div>Reportes (próximamente)</div>} />
-          <Route path="/historical-reports" element={<HistoricalReports />} />
-          <Route path="/configuracion" element={<Config />} />
+          <Route path="/sales" element={<SalesManagement />} />
+          <Route path="/products" element={<ProductManagement />} />
         </Routes>
       </div>
     </Router>

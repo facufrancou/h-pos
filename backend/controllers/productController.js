@@ -1,48 +1,77 @@
-const fs = require('fs');
-const path = require('path');
-const dbPath = path.join(__dirname, '../data/db.json');
+const Product = require('../models/Product');
 
-exports.getProducts = (req, res) => {
-  const db = JSON.parse(fs.readFileSync(dbPath));
-  res.json(db.products);
-};
-
-// Agregar producto
-exports.addProduct = (req, res) => {
-  const { id, name, price, priceAlt } = req.body;
-  const db = JSON.parse(fs.readFileSync(dbPath));
-  
-  // Validar duplicados
-  if (db.products.some(product => product.id === id)) {
-    return res.status(400).json({ message: 'El ID del producto ya existe.' });
+// Obtener todos los productos
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener productos', details: error });
   }
-
-  db.products.push({ id, name, price, priceAlt });
-  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-  res.status(201).json({ message: 'Producto agregado exitosamente.' });
 };
 
-// Actualizar producto
-exports.updateProduct = (req, res) => {
-  const { id, name, price, priceAlt } = req.body;
-  const db = JSON.parse(fs.readFileSync(dbPath));
+// Agregar un nuevo producto
+exports.addProduct = async (req, res) => {
+  try {
+    const { nombre, descripcion, precio, precio_alternativo, puntos_suma, cantidad_stock } = req.body;
 
-  const productIndex = db.products.findIndex(product => product.id === id);
-  if (productIndex === -1) {
-    return res.status(404).json({ message: 'Producto no encontrado.' });
+    const newProduct = await Product.create({
+      nombre,
+      descripcion,
+      precio,
+      precio_alternativo,
+      puntos_suma,
+      cantidad_stock,
+    });
+
+    res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al agregar producto', details: error });
   }
-
-  db.products[productIndex] = { id, name, price, priceAlt };
-  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-  res.status(200).json({ message: 'Producto actualizado exitosamente.' });
 };
 
-// Eliminar producto
-exports.deleteProduct = (req, res) => {
-  const { id } = req.params;
-  const db = JSON.parse(fs.readFileSync(dbPath));
+// Actualizar un producto existente
+exports.updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, descripcion, precio, precio_alternativo, puntos_suma, cantidad_stock } = req.body;
 
-  db.products = db.products.filter(product => product.id !== parseInt(id, 10));
-  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-  res.status(200).json({ message: 'Producto eliminado exitosamente.' });
+    const product = await Product.findByPk(id);
+
+    if (!product) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    product.nombre = nombre || product.nombre;
+    product.descripcion = descripcion || product.descripcion;
+    product.precio = precio || product.precio;
+    product.precio_alternativo = precio_alternativo || product.precio_alternativo;
+    product.puntos_suma = puntos_suma || product.puntos_suma;
+    product.cantidad_stock = cantidad_stock || product.cantidad_stock;
+
+    await product.save();
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar producto', details: error });
+  }
+};
+
+// Eliminar un producto
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findByPk(id);
+
+    if (!product) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    await product.destroy();
+
+    res.json({ message: 'Producto eliminado con éxito' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar producto', details: error });
+  }
 };

@@ -236,10 +236,14 @@
     }
   ],
   "sales": [],
-  "initialCash": null,
+  "initialCash": {
+    "amount": 2313,
+    "operator": "Sistema",
+    "date": "2024-11-27T23:55:40.749"
+  },
   "withdrawals": [],
   "closures": [],
   "closureCount": 0,
   "currentTurn": {},
-  "currentShift": 15
+  "currentShift": 16
 }

@@ -22,14 +22,14 @@ function Navbar() {
             <li className="nav-item">
               <Link className="nav-link" to="/">Dashboard</Link>
             </li>
-            {/* <li className="nav-item">
-              <Link className="nav-link" to="/sales-by-date">Ventas por Fecha</Link>
-            </li> */}
             <li className="nav-item">
-              <Link className="nav-link" to="/historical-reports">Reportes</Link>
+              <Link className="nav-link" to="/sales">Reportes</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/configuracion">Productos</Link>
+              <Link className="nav-link" to="/clients">Clientes</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/products">Productos</Link>
             </li>
           </ul>
         </div>

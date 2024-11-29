@@ -283,6 +283,21 @@
       "total": 9511,
       "date": "2024-11-27T23:53:13.906",
       "shift": 10
+    },
+    {
+      "products": [
+        {
+          "id": "000",
+          "name": "agua",
+          "price": 2313,
+          "quantity": 1,
+          "total": 2313
+        }
+      ],
+      "paymentMethod": "Efectivo",
+      "total": 2313,
+      "date": "2024-11-27T23:55:28.909",
+      "shift": 15
     }
   ],
   "withdrawals": [
@@ -835,6 +850,35 @@
       "cashInBox": -5489,
       "moneyInAccount": 0,
       "finalCash": -5489
+    },
+    {
+      "shift": 15,
+      "date": "2024-11-27T23:55:40.749",
+      "type": "X",
+      "totalSales": 2313,
+      "salesDetails": [
+        {
+          "products": [
+            {
+              "id": "000",
+              "name": "agua",
+              "price": 2313,
+              "quantity": 1,
+              "total": 2313
+            }
+          ],
+          "paymentMethod": "Efectivo",
+          "total": 2313,
+          "date": "2024-11-27T23:55:28.909",
+          "shift": 15
+        }
+      ],
+      "totalWithdrawals": 0,
+      "withdrawalDetails": [],
+      "initialCash": 0,
+      "cashInBox": 2313,
+      "moneyInAccount": 0,
+      "finalCash": 2313
     }
   ]
 }
