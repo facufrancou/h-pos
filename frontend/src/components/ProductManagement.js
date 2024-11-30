@@ -116,7 +116,7 @@ function ProductManagement() {
           </tr>
         </thead>
         <tbody>
-          {filteredProducts.map((product) => (
+        {filteredProducts.slice(0, 5).map((product) => (
             <tr key={product.id}>
               <td>{product.id}</td>
               <td>{product.nombre}</td>

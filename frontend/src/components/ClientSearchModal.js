@@ -27,16 +27,18 @@ function ClientSearchModal({ show, onClose, onSelectClient }) {
 
   const filterClients = () => {
     if (searchTerm.trim() === '') {
-      setFilteredClients([]);
+        setFilteredClients([]);
     } else {
-      const filtered = clients.filter(
-        (client) =>
-          client.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          client.apellido.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredClients(filtered);
+        const filtered = clients.filter((client) => {
+            return (
+                (client.nombre && client.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (client.apellido && client.apellido.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (client.email && client.email.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+        });
+        setFilteredClients(filtered);
     }
-  };
+};
 
   const handleSelectClient = (client) => {
     onSelectClient(client); // Pasar el cliente seleccionado al modal principal

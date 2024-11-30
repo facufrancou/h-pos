@@ -60,10 +60,11 @@ function ClientManagement() {
     if (window.confirm('¿Estás seguro de eliminar este cliente?')) {
       try {
         await axios.delete(`http://localhost:5000/api/clients/${id}`);
-        fetchClients();
         alert('Cliente eliminado exitosamente');
+        fetchClients(); // Vuelve a cargar la lista de clientes
       } catch (error) {
-        console.error('Error deleting client:', error);
+        console.error('Error al eliminar cliente:', error);
+        alert('Error al eliminar cliente. Por favor, intenta de nuevo.');
       }
     }
   };
@@ -100,9 +101,11 @@ function ClientManagement() {
     }
 };
 
-  const filteredClients = clients.filter((client) =>
-    client.nombre && client.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+const filteredClients = clients.filter((client) =>
+  (client.nombre && client.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+  (client.apellido && client.apellido.toLowerCase().includes(searchTerm.toLowerCase())) ||
+  (client.email && client.email.toLowerCase().includes(searchTerm.toLowerCase()))
+);
 
   return (
     <div className="container mt-4">
@@ -133,7 +136,7 @@ function ClientManagement() {
           </tr>
         </thead>
         <tbody>
-          {filteredClients.map((client) => (
+        {filteredClients.slice(0, 5).map((client) => (
             <tr key={client.id}>
               <td>{client.id}</td>
               <td>{client.nombre}</td>

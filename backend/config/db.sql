@@ -1,9 +1,9 @@
 -- Crear la base de datos
-CREATE DATABASE punto_de_venta;
+CREATE DATABASE IF NOT EXISTS punto_de_venta;
 USE punto_de_venta;
 
 -- Tabla: productos
-CREATE TABLE productos (
+CREATE TABLE IF NOT EXISTS productos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     descripcion TEXT,
@@ -15,7 +15,7 @@ CREATE TABLE productos (
 );
 
 -- Tabla: clientes
-CREATE TABLE clientes (
+CREATE TABLE IF NOT EXISTS clientes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
@@ -26,8 +26,8 @@ CREATE TABLE clientes (
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla: metodos_pago (nuevo)
-CREATE TABLE metodos_pago (
+-- Tabla: metodos_pago
+CREATE TABLE IF NOT EXISTS metodos_pago (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE, -- Nombre del método de pago
     descripcion TEXT, -- Descripción opcional
@@ -35,47 +35,47 @@ CREATE TABLE metodos_pago (
 );
 
 -- Tabla: ventas
-CREATE TABLE ventas (
+CREATE TABLE IF NOT EXISTS ventas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT, -- Cliente que realizó la compra
     metodo_pago_id INT, -- Relación con la tabla de métodos de pago
     fecha DATETIME NOT NULL,
     total DECIMAL(10, 2) NOT NULL,
     puntos_ganados INT DEFAULT 0, -- Puntos ganados en esta venta
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id),
-    FOREIGN KEY (metodo_pago_id) REFERENCES metodos_pago(id) -- Relación con métodos de pago
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE SET NULL, -- Configuración de ON DELETE SET NULL
+    FOREIGN KEY (metodo_pago_id) REFERENCES metodos_pago(id)
 );
 
--- Tabla: productos_en_ventas (relación N:M entre productos y ventas)
-CREATE TABLE productos_en_ventas (
+-- Tabla: productos_en_ventas
+CREATE TABLE IF NOT EXISTS productos_en_ventas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     venta_id INT NOT NULL,
-    producto_id INT NOT NULL,
+    producto_id INT, -- Producto relacionado
     cantidad INT NOT NULL, -- Cantidad de producto vendido
     precio_unitario DECIMAL(10, 2) NOT NULL,
     total DECIMAL(10, 2) NOT NULL, -- Total de este producto en la venta
     FOREIGN KEY (venta_id) REFERENCES ventas(id),
-    FOREIGN KEY (producto_id) REFERENCES productos(id)
+    FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE SET NULL -- Configuración de ON DELETE SET NULL
 );
 
--- Tabla: fondos (para registrar ingresos de efectivo iniciales)
-CREATE TABLE fondos (
+-- Tabla: fondos
+CREATE TABLE IF NOT EXISTS fondos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha DATETIME NOT NULL,
     descripcion TEXT, -- Motivo o descripción del fondo
     monto DECIMAL(10, 2) NOT NULL
 );
 
--- Tabla: retiros (retiros de caja)
-CREATE TABLE retiros (
+-- Tabla: retiros
+CREATE TABLE IF NOT EXISTS retiros (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha DATETIME NOT NULL,
     descripcion TEXT, -- Motivo o descripción del retiro
     monto DECIMAL(10, 2) NOT NULL
 );
 
--- Tabla: cierres (cierres de turno o totales)
-CREATE TABLE cierres (
+-- Tabla: cierres
+CREATE TABLE IF NOT EXISTS cierres (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tipo VARCHAR(1) NOT NULL, -- 'X' para parcial, 'Z' para total
     fecha DATETIME NOT NULL,
@@ -85,8 +85,8 @@ CREATE TABLE cierres (
     total_final DECIMAL(10, 2) NOT NULL -- Total después del cierre
 );
 
--- Tabla: comandas (para manejo de órdenes)
-CREATE TABLE comandas (
+-- Tabla: comandas
+CREATE TABLE IF NOT EXISTS comandas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     venta_id INT NOT NULL, -- Relación con la venta
     estado ENUM('pendiente', 'aceptado', 'finalizado') NOT NULL DEFAULT 'pendiente', -- Estado de la comanda
@@ -95,8 +95,8 @@ CREATE TABLE comandas (
     FOREIGN KEY (venta_id) REFERENCES ventas(id)
 );
 
--- Tabla: historial_puntos (registro de puntos ganados o canjeados)
-CREATE TABLE historial_puntos (
+-- Tabla: historial_puntos
+CREATE TABLE IF NOT EXISTS historial_puntos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT NOT NULL,
     puntos INT NOT NULL, -- Puntos ganados o canjeados
@@ -110,7 +110,6 @@ CREATE INDEX idx_producto_nombre ON productos (nombre);
 CREATE INDEX idx_cliente_email ON clientes (email);
 CREATE INDEX idx_fecha_ventas ON ventas (fecha);
 CREATE INDEX idx_estado_comandas ON comandas (estado);
-
 
 -- Insertar métodos de pago iniciales
 INSERT INTO metodos_pago (nombre, descripcion) VALUES
