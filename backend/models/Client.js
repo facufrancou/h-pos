@@ -8,7 +8,7 @@ const Client = sequelize.define('Client', {
   direccion: { type: DataTypes.STRING },
   email: { type: DataTypes.STRING, unique: true, allowNull: false },
   telefono: { type: DataTypes.STRING },
-  puntos_acumulados: { type: DataTypes.INTEGER, defaultValue: 0 },
+  puntos_acumulados: { type: DataTypes.INTEGER, defaultValue: 0 }, // Campo para puntos acumulados
   creado_en: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
 }, {
   tableName: 'clientes',

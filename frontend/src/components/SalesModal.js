@@ -131,10 +131,10 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
 
   const handleFinalizeSale = async () => {
     if (!paymentMethod) {
-      alert("Por favor seleccione un método de pago.");
+      alert('Por favor seleccione un método de pago.');
       return;
     }
-
+  
     const saleData = {
       cliente_id: clientId || null,
       metodo_pago_id: paymentMethod,
@@ -144,26 +144,37 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
         cantidad: product.quantity,
         precio_unitario: product.precio_unitario,
         total: product.total,
+        puntos_suma: product.puntos_suma, // Verifica que esto esté definido
       })),
     };
-
+  
     try {
-      await axios.post("http://localhost:5000/api/sales", saleData);
-      alert("Venta confirmada exitosamente");
-
-      // Reiniciar todos los campos
+      await axios.post('http://localhost:5000/api/sales', saleData);
+      alert('Venta confirmada exitosamente');
+      // Reiniciar estados del modal
       setSelectedProducts([]);
-      setPaymentMethod("");
-      setClientId("");
-      setSearchTerm("");
-      setFilteredProducts([]);
-      setTotal(0);
+      setPaymentMethod('');
+      setClientId('');
       onClose();
     } catch (error) {
-      console.error("Error confirmando la venta:", error);
-      alert("Error al confirmar la venta");
+      console.error('Error confirmando la venta:', error);
+      alert('Error al confirmar la venta');
     }
   };
+
+  const fetchClientPoints = async (clientId) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/clients/${clientId}`);
+      alert(`Puntos acumulados: ${response.data.puntos_acumulados}`);
+    } catch (error) {
+      console.error("Error fetching client points:", error);
+    }
+  };
+  
+  // Llamar esta función después de confirmar la venta
+  if (clientId) {
+    fetchClientPoints(clientId);
+  }
 
   const handleOpenClientModal = () => {
     setShowClientModal(true);

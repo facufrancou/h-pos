@@ -5,7 +5,7 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">POS Heladería</Link>
+        <Link className="navbar-brand" to="/">Punto360</Link>
         <button
           className="navbar-toggler"
           type="button"

@@ -1,69 +1,61 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import SalesModal from './SalesModal';
 
 function Dashboard() {
-  const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [showSalesModal, setShowSalesModal] = useState(false);
+  const [showFundModal, setShowFundModal] = useState(false); // Modal para fondo
+  const [showWithdrawalModal, setShowWithdrawalModal] = useState(false); // Modal para retiro
+  const [fundAmount, setFundAmount] = useState(''); // Monto para fondo
+  const [fundDescription, setFundDescription] = useState(''); // Descripción de fondo
+  const [withdrawalAmount, setWithdrawalAmount] = useState(''); // Monto para retiro
+  const [withdrawalDescription, setWithdrawalDescription] = useState(''); // Descripción de retiro
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    filterProducts();
-  }, [searchTerm, products]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/products');
-      setProducts(response.data);
+      console.log('Products fetched:', response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
     }
-  };
+  }, []);
 
-  const filterProducts = () => {
-    const filtered = products.filter((product) =>
-      product.id.toString().includes(searchTerm)
-    );
-    setFilteredProducts(filtered);
-  };
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleAddProductToSale = (product) => {
-    const existingProduct = selectedProducts.find((p) => p.id === product.id);
-    if (existingProduct) {
-      setSelectedProducts((prev) =>
-        prev.map((p) =>
-          p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
-        )
-      );
-    } else {
-      setSelectedProducts((prev) => [...prev, { ...product, quantity: 1 }]);
+  const handleFundSubmit = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/funds', {
+        fecha: new Date().toISOString(),
+        descripcion: fundDescription,
+        monto: parseFloat(fundAmount),
+      });
+      alert('Fondo ingresado correctamente');
+      setShowFundModal(false);
+      setFundAmount('');
+      setFundDescription('');
+    } catch (error) {
+      console.error('Error al ingresar fondo:', error);
+      alert('Error al ingresar fondo');
     }
   };
 
-  const handleConfirmSale = async (paymentMethod) => {
+  const handleWithdrawalSubmit = async () => {
     try {
-      const saleData = {
-        products: selectedProducts,
-        paymentMethod,
-      };
-      await axios.post('http://localhost:5000/api/sales', saleData);
-      alert('Venta confirmada exitosamente');
-      setSelectedProducts([]);
-      setShowSalesModal(false);
+      await axios.post('http://localhost:5000/api/withdrawals', {
+        fecha: new Date().toISOString(),
+        descripcion: withdrawalDescription,
+        monto: parseFloat(withdrawalAmount),
+      });
+      alert('Retiro ingresado correctamente');
+      setShowWithdrawalModal(false);
+      setWithdrawalAmount('');
+      setWithdrawalDescription('');
     } catch (error) {
-      console.error('Error confirmando la venta:', error);
-      alert('Error al confirmar la venta');
+      console.error('Error al ingresar retiro:', error);
+      alert('Error al ingresar retiro');
     }
   };
 
@@ -77,49 +69,98 @@ function Dashboard() {
         >
           Nueva Venta
         </button>
-        {/* <input
-          type="text"
-          className="form-control"
-          placeholder="Buscar productos por ID..."
-          value={searchTerm}
-          onChange={handleSearch}
-        /> */}
+        <button
+          className="btn btn-success mb-3 ms-2"
+          onClick={() => setShowFundModal(true)}
+        >
+          Ingresar Fondo de Caja
+        </button>
+        <button
+          className="btn btn-warning mb-3 ms-2"
+          onClick={() => setShowWithdrawalModal(true)}
+        >
+          Ingresar Retiro
+        </button>
       </div>
-      {/* <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredProducts.map((product) => (
-            <tr key={product.id}>
-              <td>{product.id}</td>
-              <td>{product.nombre}</td>
-              <td>${product.precio}</td>
-              <td>{product.cantidad_stock}</td>
-              <td>
-                <button
-                  className="btn btn-success btn-sm"
-                  onClick={() => handleAddProductToSale(product)}
-                >
-                  Agregar a Venta
+
+      {/* Modales */}
+      {showFundModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5>Ingresar Fondo de Caja</h5>
+                <button className="btn-close" onClick={() => setShowFundModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <input
+                  type="number"
+                  className="form-control mb-3"
+                  placeholder="Monto"
+                  value={fundAmount}
+                  onChange={(e) => setFundAmount(e.target.value)}
+                />
+                <textarea
+                  className="form-control"
+                  placeholder="Descripción"
+                  value={fundDescription}
+                  onChange={(e) => setFundDescription(e.target.value)}
+                ></textarea>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-primary" onClick={handleFundSubmit}>
+                  Registrar Fondo
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table> */}
+                <button className="btn btn-secondary" onClick={() => setShowFundModal(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showWithdrawalModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5>Ingresar Retiro</h5>
+                <button className="btn-close" onClick={() => setShowWithdrawalModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <input
+                  type="number"
+                  className="form-control mb-3"
+                  placeholder="Monto"
+                  value={withdrawalAmount}
+                  onChange={(e) => setWithdrawalAmount(e.target.value)}
+                />
+                <textarea
+                  className="form-control"
+                  placeholder="Descripción"
+                  value={withdrawalDescription}
+                  onChange={(e) => setWithdrawalDescription(e.target.value)}
+                ></textarea>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-primary" onClick={handleWithdrawalSubmit}>
+                  Registrar Retiro
+                </button>
+                <button className="btn btn-secondary" onClick={() => setShowWithdrawalModal(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SalesModal
         show={showSalesModal}
         onClose={() => setShowSalesModal(false)}
         selectedProducts={selectedProducts}
         setSelectedProducts={setSelectedProducts}
-        handleConfirm={handleConfirmSale}
       />
     </div>
   );

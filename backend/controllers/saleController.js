@@ -25,11 +25,22 @@ exports.getSales = async (req, res) => {
     const sales = await Sale.findAll({
       where,
       include: [
-        { model: Client, as: 'cliente' },
+        { 
+          model: Client, 
+          as: 'cliente',
+          attributes: ['id', 'nombre', 'apellido'] // Campos del cliente
+        },
         {
           model: SaleProduct,
           as: 'productos',
-          include: [{ model: Product, as: 'producto' }]
+          attributes: ['id', 'cantidad', 'precio_unitario', 'total'], // Campos de la relación productos_en_ventas
+          include: [
+            {
+              model: Product,
+              as: 'producto',
+              attributes: ['id', 'nombre'] // Campos del producto
+            }
+          ]
         }
       ]
     });
@@ -40,25 +51,48 @@ exports.getSales = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener ventas', details: error });
   }
 };
+
 // Crear una nueva venta
 exports.createSale = async (req, res) => {
+  const { cliente_id, metodo_pago_id, productos } = req.body;
+
   try {
-    const { cliente_id,metodo_pago_id, total, productos } = req.body;
+    // Calcular el total y los puntos ganados
+    const total = productos.reduce((sum, p) => sum + p.total, 0);
+    const puntosGanados = productos.reduce((sum, p) => sum + (p.puntos_suma * p.cantidad), 0);
+   
 
-    const sale = await Sale.create({ cliente_id, metodo_pago_id, total });
+    // Crear la venta
+    const newSale = await Sale.create({
+      cliente_id,
+      metodo_pago_id,
+      total,
+      puntos_ganados: puntosGanados, // Guardar los puntos ganados
+    });
 
-    for (const producto of productos) {
+    // Asociar productos a la venta
+    for (const product of productos) {
       await SaleProduct.create({
-        venta_id: sale.id,
-        producto_id: producto.id,
-        cantidad: producto.cantidad,
-        precio_unitario: producto.precio_unitario,
-        total: producto.total,
+        venta_id: newSale.id,
+        producto_id: product.id,
+        cantidad: product.cantidad,
+        precio_unitario: product.precio_unitario,
+        total: product.cantidad * product.precio_unitario,
       });
     }
 
-    res.status(201).json({ message: 'Venta registrada con éxito', sale });
+    // Acumular puntos si hay cliente asociado
+    if (cliente_id) {
+      const cliente = await Client.findByPk(cliente_id);
+      if (cliente) {
+        cliente.puntos_acumulados += puntosGanados; // Sumar puntos al cliente
+        await cliente.save(); // Guardar los cambios
+      }
+    }
+
+    res.status(201).json({ message: 'Venta registrada exitosamente', venta: newSale });
   } catch (error) {
+    console.error('Error al registrar la venta:', error);
     res.status(500).json({ error: 'Error al registrar la venta', details: error });
   }
 };

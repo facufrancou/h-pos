@@ -181,31 +181,25 @@ function SalesManagement() {
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedSale.productos.map((producto, index) => (
-                      <tr key={index}>
-                        <td>
-                          {producto.producto
-                            ? producto.producto.nombre
-                            : "Producto eliminado"}
-                        </td>
-                        <td>{producto.cantidad}</td>
-                        <td>
-                          $
-                          {typeof producto.precio_unitario === "number"
-                            ? producto.precio_unitario.toFixed(2)
-                            : "0.00"}
-                        </td>
-                        <td>
-                          $
-                          {typeof producto.precio_unitario === "number"
-                            ? (
-                                producto.cantidad * producto.precio_unitario
-                              ).toFixed(2)
-                            : "0.00"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
+  {selectedSale.productos.map((producto, index) => (
+    <tr key={index}>
+      <td>{producto.producto ? producto.producto.nombre : "Producto eliminado"}</td>
+      <td>{producto.cantidad}</td>
+      <td>
+        $
+        {producto.precio_unitario
+          ? parseFloat(producto.precio_unitario).toFixed(2)
+          : "0.00"}
+      </td>
+      <td>
+        $
+        {producto.precio_unitario
+          ? (producto.cantidad * parseFloat(producto.precio_unitario)).toFixed(2)
+          : "0.00"}
+      </td>
+    </tr>
+  ))}
+</tbody>
                 </table>
               </div>
               <div className="modal-footer">
