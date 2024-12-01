@@ -17,7 +17,6 @@ const closureRoutes = require('./routes/closureRoutes');
 const commandRoutes = require('./routes/commandRoutes');
 
 
-
 const app = express();
 
 // Middleware
@@ -28,7 +27,6 @@ app.use(bodyParser.json());
 app.use('/api/products', productRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/sales', saleRoutes);
-
 app.use('/api/funds', fundRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/closures', closureRoutes);

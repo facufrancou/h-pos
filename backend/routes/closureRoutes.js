@@ -1,8 +1,9 @@
 const express = require('express');
+const { getClosures, addClosure, getPartialClosure } = require('../controllers/closureController');
 const router = express.Router();
-const closureController = require('../controllers/closureController');
 
-router.get('/', closureController.getClosures);
-router.post('/', closureController.addClosure);
+router.get('/', getClosures); // Obtener todos los cierres
+router.post('/', addClosure); // Agregar un nuevo cierre
+router.get('/partial', getPartialClosure); // Generar cierre parcial
 
 module.exports = router;
