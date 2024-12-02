@@ -10,7 +10,7 @@ defineAssociations(); // Define las relaciones
 const productRoutes = require('./routes/productRoutes');
 const clientRoutes = require('./routes/clientRoutes');
 const saleRoutes = require('./routes/saleRoutes');
-
+const shiftRoutes = require('./routes/shiftRoutes');
 const fundRoutes = require('./routes/fundRoutes');
 const withdrawalRoutes = require('./routes/withdrawalRoutes');
 const closureRoutes = require('./routes/closureRoutes');
@@ -31,6 +31,7 @@ app.use('/api/funds', fundRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/closures', closureRoutes);
 app.use('/api/commands', commandRoutes);
+app.use('/api/shifts', shiftRoutes);
 
 
  /* // Iniciar el Servidor y Conectar a la Base de Datos

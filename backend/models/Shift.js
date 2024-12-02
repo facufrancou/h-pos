@@ -1,19 +1,39 @@
-const { Model, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-class Shift extends Model {}
-
-Shift.init({
-    usuario: { type: DataTypes.STRING, allowNull: false },
-    fondo_inicial: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-    fondo_final: { type: DataTypes.DECIMAL(10, 2) },
-    estado: { type: DataTypes.ENUM('abierto', 'cerrado'), defaultValue: 'abierto' },
-    inicio: { type: DataTypes.DATE, allowNull: false },
-    cierre: { type: DataTypes.DATE }
+const Shift = sequelize.define('Shift', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  usuario: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  fondo_inicial: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+  fondo_final: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  activo: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  inicio: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
+  cierre: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 }, {
-    sequelize,
-    modelName: 'Shift',
-    tableName: 'turnos'
+  tableName: 'turnos', // Especifica el nombre correcto de la tabla
 });
 
 module.exports = Shift;

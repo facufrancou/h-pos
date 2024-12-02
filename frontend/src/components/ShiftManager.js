@@ -2,86 +2,105 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function ShiftManager() {
-    const [activeShift, setActiveShift] = useState(null);
-    const [fondoInicial, setFondoInicial] = useState('');
-    const [usuario, setUsuario] = useState('');
-    const [fondoFinal, setFondoFinal] = useState('');
+  const [activeShift, setActiveShift] = useState(null);
+  const [fondoInicial, setFondoInicial] = useState('');
+  const [fondoFinal, setFondoFinal] = useState('');
+  const [usuario, setUsuario] = useState('');
 
-    useEffect(() => {
-        fetchActiveShift();
-    }, []);
+  useEffect(() => {
+    fetchActiveShift();
+  }, []);
 
-    const fetchActiveShift = async () => {
-        try {
-            const response = await axios.get('http://localhost:5000/api/shifts/active');
-            setActiveShift(response.data);
-        } catch (error) {
-            console.error('No hay un turno activo', error);
-        }
-    };
+  const fetchActiveShift = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/shifts/active');
+      setActiveShift(response.data);
+    } catch (error) {
+      console.error('Error fetching active shift:', error);
+    }
+  };
 
-    const startShift = async () => {
-        try {
-            await axios.post('http://localhost:5000/api/shifts/start', {
-                usuario,
-                fondo_inicial: parseFloat(fondoInicial),
-            });
-            alert('Turno iniciado');
-            fetchActiveShift();
-        } catch (error) {
-            console.error('Error al iniciar turno', error);
-            alert('Error al iniciar turno');
-        }
-    };
+  const startShift = async () => {
+    console.log('Datos enviados:', { usuario, fondo_inicial: parseFloat(fondoInicial) });
+    try {
+      const response = await axios.post('http://localhost:5000/api/shifts/start', {
+        usuario,
+        fondo_inicial: parseFloat(fondoInicial),
+      });
+      alert('Turno iniciado exitosamente');
+      setActiveShift(response.data);
+      setShowStartModal(false);
+      setFondoInicial('');
+      setUsuario('');
+    } catch (error) {
+      console.error('Error al iniciar turno:', error.response?.data || error.message);
+      alert('Error al iniciar turno');
+    }
+  };
 
-    const closeShift = async () => {
-        try {
-            await axios.post('http://localhost:5000/api/shifts/close', {
-                fondo_final: parseFloat(fondoFinal),
-            });
-            alert('Turno cerrado');
-            setActiveShift(null);
-        } catch (error) {
-            console.error('Error al cerrar turno', error);
-            alert('Error al cerrar turno');
-        }
-    };
+  const closeShift = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/shifts/close', {
+        fondo_final: parseFloat(fondoFinal),
+      });
+      alert('Turno cerrado exitosamente');
+      setActiveShift(null);
+      setFondoFinal('');
+    } catch (error) {
+      console.error('Error closing shift:', error);
+      alert('Error al cerrar turno');
+    }
+  };
 
-    return (
+  return (
+    <div className="container mt-4">
+      <h1>Gestión de Turnos</h1>
+      {activeShift ? (
         <div>
-            {activeShift ? (
-                <div>
-                    <h3>Turno Activo</h3>
-                    <p>Usuario: {activeShift.usuario}</p>
-                    <p>Fondo Inicial: ${activeShift.fondo_inicial}</p>
-                    <input
-                        type="number"
-                        placeholder="Fondo Final"
-                        value={fondoFinal}
-                        onChange={(e) => setFondoFinal(e.target.value)}
-                    />
-                    <button onClick={closeShift}>Cerrar Turno</button>
-                </div>
-            ) : (
-                <div>
-                    <h3>Iniciar Turno</h3>
-                    <input
-                        type="text"
-                        placeholder="Usuario"
-                        value={usuario}
-                        onChange={(e) => setUsuario(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Fondo Inicial"
-                        value={fondoInicial}
-                        onChange={(e) => setFondoInicial(e.target.value)}
-                    />
-                    <button onClick={startShift}>Iniciar Turno</button>
-                </div>
-            )}
+          <h3>Turno Activo</h3>
+          <p><strong>Usuario:</strong> {activeShift.usuario}</p>
+          <p><strong>Fondo Inicial:</strong> ${activeShift.fondo_inicial}</p>
+          <div className="mb-3">
+            <label>Fondo Final:</label>
+            <input
+              type="number"
+              className="form-control"
+              value={fondoFinal}
+              onChange={(e) => setFondoFinal(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-danger" onClick={closeShift}>
+            Cerrar Turno
+          </button>
         </div>
-    );
+      ) : (
+        <div>
+          <h3>Iniciar Turno</h3>
+          <div className="mb-3">
+            <label>Usuario:</label>
+            <input
+              type="text"
+              className="form-control"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label>Fondo Inicial:</label>
+            <input
+              type="number"
+              className="form-control"
+              value={fondoInicial}
+              onChange={(e) => setFondoInicial(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-primary" onClick={startShift}>
+            Iniciar Turno
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default ShiftManager;

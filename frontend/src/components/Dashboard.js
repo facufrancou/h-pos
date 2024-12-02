@@ -8,6 +8,9 @@ function Dashboard() {
   const [showFundModal, setShowFundModal] = useState(false); // Modal para fondo
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false); // Modal para retiro
   const [showClosureModal, setShowClosureModal] = useState(false); // Modal para cierre parcial
+  const [showStartModal, setShowStartModal] = useState(false); // Modal para apertura de caja
+  const [showCloseModal, setShowCloseModal] = useState(false); // Modal para cierre de caja
+  const [activeShift, setActiveShift] = useState(null); // Turno activo
   const [closureData, setClosureData] = useState({
     fondoInicial: 0,
     ventasEfectivo: 0,
@@ -16,11 +19,14 @@ function Dashboard() {
     ventasPorMetodo: [],
     retiros: [],
     fondos: [],
-  }); // Datos inicializados para evitar errores
+  });
   const [fundAmount, setFundAmount] = useState(''); // Monto para fondo
   const [fundDescription, setFundDescription] = useState(''); // Descripción de fondo
   const [withdrawalAmount, setWithdrawalAmount] = useState(''); // Monto para retiro
   const [withdrawalDescription, setWithdrawalDescription] = useState(''); // Descripción de retiro
+  const [fondoInicial, setFondoInicial] = useState('');
+  const [fondoFinal, setFondoFinal] = useState('');
+  const [usuario, setUsuario] = useState(''); // Usuario que abre el turno
   const paymentMethods = {
     1: "Efectivo",
     2: "Transferencia",
@@ -28,6 +34,7 @@ function Dashboard() {
     4: "Tarjeta de Crédito",
     5: "App Delivery",
   };
+
   const fetchProducts = useCallback(async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/products');
@@ -39,7 +46,49 @@ function Dashboard() {
 
   useEffect(() => {
     fetchProducts();
+    fetchActiveShift();
   }, [fetchProducts]);
+
+  const fetchActiveShift = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/shifts/active');
+      setActiveShift(response.data);
+    } catch (error) {
+      console.error('Error fetching active shift:', error);
+    }
+  };
+
+  const startShift = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/shifts/start', {
+        usuario,
+        fondo_inicial: parseFloat(fondoInicial),
+      });
+      alert('Turno iniciado exitosamente');
+      setActiveShift(response.data);
+      setShowStartModal(false);
+      setFondoInicial('');
+      setUsuario('');
+    } catch (error) {
+      console.error('Error starting shift:', error);
+      alert('Error al iniciar turno');
+    }
+  };
+
+  const closeShift = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/shifts/close', {
+        fondo_final: parseFloat(fondoFinal),
+      });
+      alert('Turno cerrado exitosamente');
+      setActiveShift(null);
+      setShowCloseModal(false);
+      setFondoFinal('');
+    } catch (error) {
+      console.error('Error closing shift:', error);
+      alert('Error al cerrar turno');
+    }
+  };
 
   const handleFundSubmit = async () => {
     try {
@@ -79,7 +128,7 @@ function Dashboard() {
     try {
       const response = await axios.get('http://localhost:5000/api/closures/partial');
       console.log('Cierre parcial generado:', response.data);
-      setClosureData(response.data?.summary || closureData); // Garantiza que los datos sean válidos
+      setClosureData(response.data?.summary || closureData);
       setShowClosureModal(true);
     } catch (error) {
       console.error('Error al generar el cierre parcial:', error);
@@ -91,8 +140,23 @@ function Dashboard() {
     <div className="container mt-4">
       <h1>Dashboard</h1>
       <div className="mb-3">
+        {!activeShift ? (
+          <button
+            className="btn btn-primary mb-3"
+            onClick={() => setShowStartModal(true)}
+          >
+            Abrir Caja
+          </button>
+        ) : (
+          <button
+            className="btn btn-danger mb-3"
+            onClick={() => setShowCloseModal(true)}
+          >
+            Cerrar Caja
+          </button>
+        )}
         <button
-          className="btn btn-primary mb-3"
+          className="btn btn-primary mb-3 ms-2"
           onClick={() => setShowSalesModal(true)}
         >
           Nueva Venta
@@ -116,6 +180,93 @@ function Dashboard() {
           Generar Cierre Parcial
         </button>
       </div>
+
+      {/* Modal de Apertura de Caja */}
+      {showStartModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5>Abrir Caja</h5>
+                <button
+                  className="btn-close"
+                  onClick={() => setShowStartModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label>Usuario:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={usuario}
+                    onChange={(e) => setUsuario(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label>Fondo Inicial:</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={fondoInicial}
+                    onChange={(e) => setFondoInicial(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-primary" onClick={startShift}>
+                  Confirmar
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowStartModal(false)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Cierre de Caja */}
+      {showCloseModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5>Cerrar Caja</h5>
+                <button
+                  className="btn-close"
+                  onClick={() => setShowCloseModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label>Fondo Final:</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={fondoFinal}
+                    onChange={(e) => setFondoFinal(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-danger" onClick={closeShift}>
+                  Confirmar
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowCloseModal(false)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Ingreso de Fondos */}
       {showFundModal && (
@@ -210,61 +361,60 @@ function Dashboard() {
                 ></button>
               </div>
               <div className="modal-body">
-              <h6>Balance</h6>
-<p><strong>Fondo Inicial:</strong> ${closureData.fondoInicial}</p>
-<p><strong>Total Ventas:</strong></p>
-<ul>
-  <li><strong>Número Total de Ventas:</strong> {closureData.totalVentasNumero || 0}</li>
-  <li><strong>Monto Total de Ventas:</strong> ${closureData.totalVentasMonto || 0}</li>
-</ul>
-<p><strong>Total Retiros:</strong> -${closureData.totalRetiros}</p>
-<p><strong>Fondo Final:</strong> ${closureData.fondoFinal}</p>
+                <h6>Balance</h6>
+                <p><strong>Fondo Inicial:</strong> ${closureData.fondoInicial}</p>
+                <p><strong>Total Ventas:</strong></p>
+                <ul>
+                  <li><strong>Número Total de Ventas:</strong> {closureData.totalVentasNumero || 0}</li>
+                  <li><strong>Monto Total de Ventas:</strong> ${closureData.totalVentasMonto || 0}</li>
+                </ul>
+                <p><strong>Total Retiros:</strong> -${closureData.totalRetiros}</p>
+                <p><strong>Fondo Final:</strong> ${closureData.fondoFinal}</p>
 
-<h6>Detalle de Fondos</h6>
-<ul>
-  <li><strong>Fondo en Caja:</strong> ${closureData.fondoCaja || 0}</li>
-  <li><strong>Fondo en Cuenta:</strong> ${closureData.fondoCuenta || 0}</li>
-</ul>
+                <h6>Detalle de Fondos</h6>
+                <ul>
+                  <li><strong>Fondo en Caja:</strong> ${closureData.fondoCaja || 0}</li>
+                  <li><strong>Fondo en Cuenta:</strong> ${closureData.fondoCuenta || 0}</li>
+                </ul>
 
-<h6>Ventas por Método de Pago</h6>
-<ul>
-  {closureData.ventasPorMetodo.length > 0 ? (
-    closureData.ventasPorMetodo.map((venta, index) => (
-      <li key={index}>
-        {paymentMethods[venta.metodo] || `Método ID ${venta.metodo}`}: ${venta.total}
-      </li>
-    ))
-  ) : (
-    <li>No hay ventas registradas.</li>
-  )}
-</ul>
+                <h6>Ventas por Método de Pago</h6>
+                <ul>
+                  {closureData.ventasPorMetodo.length > 0 ? (
+                    closureData.ventasPorMetodo.map((venta, index) => (
+                      <li key={index}>
+                        {paymentMethods[venta.metodo] || `Método ID ${venta.metodo}`}: ${venta.total}
+                      </li>
+                    ))
+                  ) : (
+                    <li>No hay ventas registradas.</li>
+                  )}
+                </ul>
 
-<h6>Detalle de Retiros</h6>
-<ul>
-  {closureData.retiros.length > 0 ? (
-    closureData.retiros.map((retiro, index) => (
-      <li key={index}>
-        {retiro.descripcion}: -${retiro.monto}
-      </li>
-    ))
-  ) : (
-    <li>No hay retiros registrados.</li>
-  )}
-</ul>
+                <h6>Detalle de Retiros</h6>
+                <ul>
+                  {closureData.retiros.length > 0 ? (
+                    closureData.retiros.map((retiro, index) => (
+                      <li key={index}>
+                        {retiro.descripcion}: -${retiro.monto}
+                      </li>
+                    ))
+                  ) : (
+                    <li>No hay retiros registrados.</li>
+                  )}
+                </ul>
 
-<h6>Fondos Ingresados</h6>
-<ul>
-  {closureData.fondos.length > 0 ? (
-    closureData.fondos.map((fondo, index) => (
-      <li key={index}>
-        {fondo.descripcion}: +${fondo.monto}
-      </li>
-    ))
-  ) : (
-    <li>No hay fondos registrados.</li>
-  )}
-</ul>
-
+                <h6>Fondos Ingresados</h6>
+                <ul>
+                  {closureData.fondos.length > 0 ? (
+                    closureData.fondos.map((fondo, index) => (
+                      <li key={index}>
+                        {fondo.descripcion}: +${fondo.monto}
+                      </li>
+                    ))
+                  ) : (
+                    <li>No hay fondos registrados.</li>
+                  )}
+                </ul>
               </div>
               <div className="modal-footer">
                 <button
