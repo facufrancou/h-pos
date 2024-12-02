@@ -1,161 +1,235 @@
--- Crear la base de datos
-CREATE DATABASE IF NOT EXISTS PUNTO_DE_VENTA;
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: punto_de_venta
+-- ------------------------------------------------------
+-- Server version	9.1.0
 
-USE PUNTO_DE_VENTA;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Tabla: productos
-CREATE TABLE IF NOT EXISTS PRODUCTOS (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    NOMBRE VARCHAR(255) NOT NULL,
-    DESCRIPCION TEXT,
-    PRECIO DECIMAL(10, 2) NOT NULL,
-    PRECIO_ALTERNATIVO DECIMAL(10, 2), -- Precio alternativo (por ejemplo, delivery)
-    PUNTOS_SUMA INT DEFAULT 0, -- Puntos que este producto acumula al cliente
-    CANTIDAD_STOCK INT NOT NULL, -- Cantidad en stock
-    CREADO_EN TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+--
+-- Table structure for table `cierres`
+--
 
--- Tabla: clientes
-CREATE TABLE IF NOT EXISTS CLIENTES (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    NOMBRE VARCHAR(100) NOT NULL,
-    APELLIDO VARCHAR(100) NOT NULL,
-    DIRECCION VARCHAR(255),
-    EMAIL VARCHAR(255) UNIQUE NOT NULL,
-    TELEFONO VARCHAR(20),
-    PUNTOS_ACUMULADOS INT DEFAULT 0, -- Puntos acumulados por el cliente
-    CREADO_EN TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+DROP TABLE IF EXISTS `cierres`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cierres` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tipo` varchar(1) NOT NULL,
+  `turno_id` int DEFAULT NULL,
+  `fecha` datetime NOT NULL,
+  `total_ventas` decimal(10,2) NOT NULL,
+  `total_retiros` decimal(10,2) NOT NULL,
+  `efectivo_caja` decimal(10,2) NOT NULL,
+  `total_final` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `turno_id` (`turno_id`),
+  CONSTRAINT `cierres_ibfk_1` FOREIGN KEY (`turno_id`) REFERENCES `turnos` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: turnos
-CREATE TABLE IF NOT EXISTS TURNOS (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    USUARIO VARCHAR(100) NOT NULL,
-    FONDO_INICIAL DECIMAL(10, 2) NOT NULL,
-    FONDO_FINAL DECIMAL(10, 2),
-    ESTADO ENUM('abierto', 'cerrado') DEFAULT 'abierto', -- Estado del turno
-    ACTIVO TINYINT(1) DEFAULT 0, -- Turno activo/inactivo
-    INICIO DATETIME NOT NULL,
-    CIERRE DATETIME,
-    CREATEDAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UPDATEDAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+--
+-- Table structure for table `clientes`
+--
 
--- Tabla de usuarios
-CREATE TABLE IF NOT EXISTS USUARIOS (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    NOMBRE VARCHAR(100) NOT NULL,
-    USERNAME VARCHAR(50) UNIQUE NOT NULL,
-    PASSWORD VARCHAR(255) NOT NULL, -- Se guardará encriptado
-    CREADO_EN TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+DROP TABLE IF EXISTS `clientes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `clientes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `apellido` varchar(100) NOT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `puntos_acumulados` int DEFAULT '0',
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Modificar la tabla turnos para relacionarla con usuarios
-ALTER TABLE TURNOS
-    ADD COLUMN USUARIO_ID INT, ADD FOREIGN KEY (
-        USUARIO_ID
-    )
-        REFERENCES USUARIOS(
-            ID
-        ) ON DELETE SET NULL;
+--
+-- Table structure for table `fondos`
+--
 
--- Tabla: metodos_pago
-CREATE TABLE IF NOT EXISTS METODOS_PAGO (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    NOMBRE VARCHAR(50) NOT NULL UNIQUE, -- Nombre del método de pago
-    DESCRIPCION TEXT, -- Descripción opcional
-    CREADO_EN TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+DROP TABLE IF EXISTS `fondos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fondos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `turno_id` int DEFAULT NULL,
+  `fecha` datetime NOT NULL,
+  `descripcion` text,
+  `monto` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `turno_id` (`turno_id`),
+  CONSTRAINT `fondos_ibfk_1` FOREIGN KEY (`turno_id`) REFERENCES `turnos` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: ventas
-CREATE TABLE IF NOT EXISTS VENTAS (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    CLIENTE_ID INT, -- Cliente que realizó la compra
-    METODO_PAGO_ID INT, -- Relación con la tabla de métodos de pago
-    TURNO_ID INT, -- Relación con la tabla de turnos
-    FECHA DATETIME NOT NULL,
-    TOTAL DECIMAL(10, 2) NOT NULL,
-    PUNTOS_GANADOS INT DEFAULT 0, -- Puntos ganados en esta venta
-    FOREIGN KEY (CLIENTE_ID) REFERENCES CLIENTES(ID) ON DELETE SET NULL,
-    FOREIGN KEY (METODO_PAGO_ID) REFERENCES METODOS_PAGO(ID),
-    FOREIGN KEY (TURNO_ID) REFERENCES TURNOS(ID) ON DELETE SET NULL
-);
+--
+-- Table structure for table `metodos_pago`
+--
 
--- Tabla: productos_en_ventas
-CREATE TABLE IF NOT EXISTS PRODUCTOS_EN_VENTAS (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    VENTA_ID INT NOT NULL,
-    PRODUCTO_ID INT, -- Producto relacionado
-    CANTIDAD INT NOT NULL, -- Cantidad de producto vendido
-    PRECIO_UNITARIO DECIMAL(10, 2) NOT NULL,
-    TOTAL DECIMAL(10, 2) NOT NULL, -- Total de este producto en la venta
-    FOREIGN KEY (VENTA_ID) REFERENCES VENTAS(ID),
-    FOREIGN KEY (PRODUCTO_ID) REFERENCES PRODUCTOS(ID) ON DELETE SET NULL
-);
+DROP TABLE IF EXISTS `metodos_pago`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `metodos_pago` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) NOT NULL,
+  `descripcion` text,
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: fondos
-CREATE TABLE IF NOT EXISTS FONDOS (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    TURNO_ID INT, -- Relación con la tabla de turnos
-    FECHA DATETIME NOT NULL,
-    DESCRIPCION TEXT, -- Motivo o descripción del fondo
-    MONTO DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (TURNO_ID) REFERENCES TURNOS(ID) ON DELETE SET NULL
-);
+--
+-- Table structure for table `productos`
+--
 
--- Tabla: retiros
-CREATE TABLE IF NOT EXISTS RETIROS (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    TURNO_ID INT, -- Relación con la tabla de turnos
-    FECHA DATETIME NOT NULL,
-    DESCRIPCION TEXT, -- Motivo o descripción del retiro
-    MONTO DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (TURNO_ID) REFERENCES TURNOS(ID) ON DELETE SET NULL
-);
+DROP TABLE IF EXISTS `productos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `productos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `descripcion` text,
+  `precio` decimal(10,2) NOT NULL,
+  `precio_alternativo` decimal(10,2) DEFAULT NULL,
+  `puntos_suma` int DEFAULT '0',
+  `cantidad_stock` int NOT NULL,
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=213 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: cierres
-CREATE TABLE IF NOT EXISTS CIERRES (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    TIPO VARCHAR(1) NOT NULL, -- 'X' para parcial, 'Z' para total
-    TURNO_ID INT, -- Relación con la tabla de turnos
-    FECHA DATETIME NOT NULL,
-    TOTAL_VENTAS DECIMAL(10, 2) NOT NULL,
-    TOTAL_RETIROS DECIMAL(10, 2) NOT NULL,
-    EFECTIVO_CAJA DECIMAL(10, 2) NOT NULL, -- Dinero efectivo disponible en caja
-    TOTAL_FINAL DECIMAL(10, 2) NOT NULL, -- Total después del cierre
-    FOREIGN KEY (TURNO_ID) REFERENCES TURNOS(ID) ON DELETE SET NULL
-);
+--
+-- Table structure for table `productos_en_ventas`
+--
 
--- Insertar métodos de pago iniciales
-INSERT INTO METODOS_PAGO (
-    NOMBRE,
-    DESCRIPCION
-) VALUES (
-    'Efectivo',
-    'Pago en efectivo'
-),
-(
-    'Transferencia',
-    'Pago mediante transferencia bancaria'
-),
-(
-    'Tarjeta de Débito',
-    'Pago con tarjeta de débito'
-),
-(
-    'Tarjeta de Crédito',
-    'Pago con tarjeta de crédito'
-),
-(
-    'App Delivery',
-    'Pago a través de la aplicación de delivery'
-);
+DROP TABLE IF EXISTS `productos_en_ventas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `productos_en_ventas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `venta_id` int NOT NULL,
+  `producto_id` int DEFAULT NULL,
+  `cantidad` int NOT NULL,
+  `precio_unitario` decimal(10,2) NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `venta_id` (`venta_id`),
+  KEY `producto_id` (`producto_id`),
+  CONSTRAINT `productos_en_ventas_ibfk_1` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`),
+  CONSTRAINT `productos_en_ventas_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Modificar la tabla turnos para relacionarla con usuarios
-ALTER TABLE TURNOS
-    ADD COLUMN USUARIO_ID INT, ADD FOREIGN KEY (
-        USUARIO_ID
-    )
-        REFERENCES USUARIOS(
-            ID
-        ) ON DELETE SET NULL;
+--
+-- Table structure for table `retiros`
+--
+
+DROP TABLE IF EXISTS `retiros`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `retiros` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `turno_id` int DEFAULT NULL,
+  `fecha` datetime NOT NULL,
+  `descripcion` text,
+  `monto` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `turno_id` (`turno_id`),
+  CONSTRAINT `retiros_ibfk_1` FOREIGN KEY (`turno_id`) REFERENCES `turnos` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `turnos`
+--
+
+DROP TABLE IF EXISTS `turnos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `turnos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `usuario` varchar(100) NOT NULL,
+  `fondo_inicial` decimal(10,2) NOT NULL,
+  `fondo_final` decimal(10,2) DEFAULT NULL,
+  `estado` enum('abierto','cerrado') DEFAULT 'abierto',
+  `inicio` datetime NOT NULL,
+  `cierre` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `usuario_id` int DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `usuario_id` (`usuario_id`),
+  CONSTRAINT `turnos_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `usuarios`
+--
+
+DROP TABLE IF EXISTS `usuarios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `usuarios` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ventas`
+--
+
+DROP TABLE IF EXISTS `ventas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ventas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cliente_id` int DEFAULT NULL,
+  `metodo_pago_id` int DEFAULT NULL,
+  `turno_id` int DEFAULT NULL,
+  `fecha` datetime NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `puntos_ganados` int DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `cliente_id` (`cliente_id`),
+  KEY `metodo_pago_id` (`metodo_pago_id`),
+  KEY `turno_id` (`turno_id`),
+  CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `ventas_ibfk_2` FOREIGN KEY (`metodo_pago_id`) REFERENCES `metodos_pago` (`id`),
+  CONSTRAINT `ventas_ibfk_3` FOREIGN KEY (`turno_id`) REFERENCES `turnos` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-12-02 19:50:47

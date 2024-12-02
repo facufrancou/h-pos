@@ -56,10 +56,8 @@ exports.startShift = async (req, res) => {
     res.status(500).json({ error: 'Error al iniciar turno', details: error });
   }
 };
-
-  
   // Cerrar turno
-  exports.closeShift = async (req, res) => {
+exports.closeShift = async (req, res) => {
     try {
       const { fondo_final } = req.body;
   
@@ -82,4 +80,70 @@ exports.startShift = async (req, res) => {
       res.status(500).json({ error: 'Error al cerrar turno', details: error });
     }
   };
+
+  exports.getShiftDetails = async (req, res) => {
+    try {
+      // Verifica si hay un turno activo
+      const activeShift = await Shift.findOne({
+        where: { activo: true },
+      });
   
+      if (!activeShift) {
+        return res.status(404).json({ error: 'No hay un turno abierto en este momento.' });
+      }
+  
+      const shiftId = activeShift.id;
+  
+      // Obtén las ventas relacionadas al turno
+      const sales = await Sale.findAll({
+        where: { turno_id: shiftId },
+        attributes: ['id', 'total', 'fecha', 'metodo_pago_id'],
+      });
+  
+      // Obtén los fondos relacionados al turno
+      const funds = await Fund.findAll({
+        where: { turno_id: shiftId },
+        attributes: ['id', 'descripcion', 'monto', 'fecha'],
+      });
+  
+      // Obtén los retiros relacionados al turno
+      const withdrawals = await Withdrawal.findAll({
+        where: { turno_id: shiftId },
+        attributes: ['id', 'descripcion', 'monto', 'fecha'],
+      });
+  
+      // Calcula totales
+      const totalSales = sales.reduce((sum, sale) => sum + parseFloat(sale.total), 0);
+      const totalFunds = funds.reduce((sum, fund) => sum + parseFloat(fund.monto), 0);
+      const totalWithdrawals = withdrawals.reduce((sum, withdrawal) => sum + parseFloat(withdrawal.monto), 0);
+  
+      // Devuelve los datos en un formato consolidado
+      const shiftDetails = {
+        turno: {
+          id: activeShift.id,
+          usuario: activeShift.usuario,
+          fondo_inicial: activeShift.fondo_inicial,
+          fondo_final: activeShift.fondo_final || null,
+          inicio: activeShift.inicio,
+          cierre: activeShift.cierre || null,
+        },
+        ventas: {
+          total: totalSales,
+          detalle: sales,
+        },
+        fondos: {
+          total: totalFunds,
+          detalle: funds,
+        },
+        retiros: {
+          total: totalWithdrawals,
+          detalle: withdrawals,
+        },
+      };
+  
+      res.status(200).json(shiftDetails);
+    } catch (error) {
+      console.error('Error al obtener los detalles del turno:', error);
+      res.status(500).json({ error: 'Error al obtener los detalles del turno.' });
+    }
+  };
