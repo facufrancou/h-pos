@@ -2,6 +2,7 @@ const Sale = require('../models/Sale');
 const Client = require('../models/Client');
 const Product = require('../models/Product');
 const SaleProduct = require('../models/SaleProduct');
+const getActiveShift = require('../helpers/getActiveShift');
 const { Op } = require('sequelize'); // Para operadores de Sequelize
 
 
@@ -60,14 +61,17 @@ exports.createSale = async (req, res) => {
     // Calcular el total y los puntos ganados
     const total = productos.reduce((sum, p) => sum + p.total, 0);
     const puntosGanados = productos.reduce((sum, p) => sum + (p.puntos_suma * p.cantidad), 0);
-   
 
-    // Crear la venta
+    // Obtener el turno activo
+    const activeShift = await getActiveShift();
+
+    // Crear la venta asociada al turno activo
     const newSale = await Sale.create({
       cliente_id,
       metodo_pago_id,
       total,
       puntos_ganados: puntosGanados, // Guardar los puntos ganados
+      turno_id: activeShift.id, // Asociar la venta al turno activo
     });
 
     // Asociar productos a la venta

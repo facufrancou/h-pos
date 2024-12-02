@@ -127,14 +127,38 @@ function Dashboard() {
   const handleGeneratePartialClosure = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/closures/partial');
-      console.log('Cierre parcial generado:', response.data);
-      setClosureData(response.data?.summary || closureData);
+      const summary = response.data?.summary || closureData;
+  
+      // Calcula Fondo en Caja (solo efectivo) y Fondo en Cuenta (otros métodos de pago)
+      const efectivo = summary.ventasPorMetodo
+        .filter((venta) => venta.metodo === 1) // Método 1: Efectivo
+        .reduce((total, venta) => total + parseFloat(venta.total || 0), 0);
+  
+      const otrosMetodos = summary.ventasPorMetodo
+        .filter((venta) => venta.metodo !== 1) // Métodos distintos a efectivo
+        .reduce((total, venta) => total + parseFloat(venta.total || 0), 0);
+  
+      // Calcula fondoCaja y fondoCuenta
+      const fondoCaja = efectivo 
+        + summary.fondos.reduce((sum, fondo) => sum + parseFloat(fondo.monto || 0), 0) 
+        - summary.retiros.reduce((sum, retiro) => sum + parseFloat(retiro.monto || 0), 0);
+  
+      const fondoCuenta = otrosMetodos;
+  
+      // Actualiza closureData
+      setClosureData({
+        ...summary,
+        fondoCaja: fondoCaja.toFixed(2),
+        fondoCuenta: fondoCuenta.toFixed(2),
+      });
+  
       setShowClosureModal(true);
     } catch (error) {
-      console.error('Error al generar el cierre parcial:', error);
+      console.error('Error al generar el cierre parcial:', error.response?.data || error.message);
       alert('Error al generar el cierre parcial');
     }
   };
+  
 
   return (
     <div className="container mt-4">

@@ -1,4 +1,5 @@
 const Fund = require('../models/Fund');
+const getActiveShift = require('../helpers/getActiveShift');
 
 exports.getFunds = async (req, res) => {
   try {
@@ -11,10 +12,26 @@ exports.getFunds = async (req, res) => {
 
 exports.addFund = async (req, res) => {
   try {
-    const { fecha, descripcion, monto } = req.body;
-    const newFund = await Fund.create({ fecha, descripcion, monto });
-    res.json(newFund);
+    const { descripcion, monto } = req.body;
+
+    if (!descripcion || !monto) {
+      return res.status(400).json({ error: 'Descripción y monto son obligatorios.' });
+    }
+
+    // Obtener el turno activo
+    const activeShift = await getActiveShift();
+
+    // Registrar el fondo asociado al turno activo
+    const newFund = await Fund.create({
+      turno_id: activeShift.id, // Asociar el fondo al turno activo
+      fecha: new Date(),
+      descripcion,
+      monto,
+    });
+
+    res.status(201).json({ message: 'Fondo registrado correctamente', fondo: newFund });
   } catch (error) {
-    res.status(500).json({ error: 'Error al agregar fondo', details: error });
+    console.error('Error al registrar fondo:', error);
+    res.status(500).json({ error: 'Error al registrar fondo', details: error.message });
   }
 };
