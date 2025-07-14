@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { showAviso } from '../utils/printExportUtils';
 
 function ClientManagement() {
   const [clients, setClients] = useState([]);
@@ -60,11 +61,11 @@ function ClientManagement() {
     if (window.confirm('¿Estás seguro de eliminar este cliente?')) {
       try {
         await axios.delete(`http://localhost:5000/api/clients/${id}`);
-        alert('Cliente eliminado exitosamente');
+        showAviso('Cliente eliminado exitosamente');
         fetchClients(); // Vuelve a cargar la lista de clientes
       } catch (error) {
         console.error('Error al eliminar cliente:', error);
-        alert('Error al eliminar cliente. Por favor, intenta de nuevo.');
+        showAviso('Error al eliminar cliente. Por favor, intenta de nuevo.');
       }
     }
   };
@@ -88,10 +89,10 @@ function ClientManagement() {
       console.log('Enviando datos al backend:', formData);
       if (isEditing) {
         await axios.put(`http://localhost:5000/api/clients/${formData.id}`, formData);
-        alert('Cliente actualizado exitosamente');
+        showAviso('Cliente actualizado exitosamente');
       } else {
         await axios.post('http://localhost:5000/api/clients', formData);
-        alert('Cliente agregado exitosamente');
+        showAviso('Cliente agregado exitosamente');
       }
       fetchClients();
       setShowModal(false);

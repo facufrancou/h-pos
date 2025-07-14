@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { showAviso } from '../utils/printExportUtils';
 
 function ShiftManager() {
   const [activeShift, setActiveShift] = useState(null);
@@ -27,14 +28,14 @@ function ShiftManager() {
         usuario,
         fondo_inicial: parseFloat(fondoInicial),
       });
-      alert('Turno iniciado exitosamente');
+      showAviso('Turno iniciado exitosamente');
       setActiveShift(response.data);
       setShowStartModal(false);
       setFondoInicial('');
       setUsuario('');
     } catch (error) {
       console.error('Error al iniciar turno:', error.response?.data || error.message);
-      alert('Error al iniciar turno');
+      showAviso('Error al iniciar turno');
     }
   };
 
@@ -43,12 +44,12 @@ function ShiftManager() {
       await axios.post('http://localhost:5000/api/shifts/close', {
         fondo_final: parseFloat(fondoFinal),
       });
-      alert('Turno cerrado exitosamente');
+      showAviso('Turno cerrado exitosamente');
       setActiveShift(null);
       setFondoFinal('');
     } catch (error) {
       console.error('Error closing shift:', error);
-      alert('Error al cerrar turno');
+      showAviso('Error al cerrar turno');
     }
   };
 

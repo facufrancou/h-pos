@@ -1,9 +1,54 @@
+
 const Shift = require('../models/Shift');
 const Sale = require('../models/Sale');
 const Fund = require('../models/Fund'); // Importa el modelo de fondos
 const Withdrawal = require('../models/Withdrawal');
 
+// Obtener todos los turnos
+exports.getAllShifts = async (req, res) => {
+  try {
+    // Obtiene todos los turnos
+    const shifts = await Shift.findAll({ order: [['inicio', 'DESC']] });
 
+    // Para cada turno, obtiene ventas, fondos y retiros relacionados
+    const detailedShifts = await Promise.all(shifts.map(async (shift) => {
+      const sales = await Sale.findAll({
+        where: { turno_id: shift.id },
+        attributes: ['id', 'total', 'fecha', 'metodo_pago_id'],
+      });
+      const funds = await Fund.findAll({
+        where: { turno_id: shift.id },
+        attributes: ['id', 'descripcion', 'monto', 'fecha'],
+      });
+      const withdrawals = await Withdrawal.findAll({
+        where: { turno_id: shift.id },
+        attributes: ['id', 'descripcion', 'monto', 'fecha'],
+      });
+      // Calcula totales
+      const ventas_totales = sales.reduce((sum, sale) => sum + parseFloat(sale.total), 0);
+      const ingresos_totales = funds.reduce((sum, fund) => sum + parseFloat(fund.monto), 0);
+      const retiros_totales = withdrawals.reduce((sum, withdrawal) => sum + parseFloat(withdrawal.monto), 0);
+      return {
+        id: shift.id,
+        usuario: shift.usuario,
+        fondo_inicial: shift.fondo_inicial,
+        fondo_final: shift.fondo_final,
+        inicio: shift.inicio,
+        cierre: shift.cierre,
+        ventas_totales,
+        ingresos_totales,
+        retiros_totales,
+        ventas: sales,
+        fondos: funds,
+        retiros: withdrawals,
+      };
+    }));
+    res.json(detailedShifts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los turnos' });
+  }
+};
 
 exports.getActiveShift = async (req, res) => {
     try {

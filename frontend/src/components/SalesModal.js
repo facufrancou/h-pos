@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClientSearchModal from "./ClientSearchModal"; // Modal para buscar clientes
+import { showAviso } from "../utils/printExportUtils";
 
-function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
+function SalesModal({ show, onClose, selectedProducts, setSelectedProducts, onSaleRegistered }) {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("1"); // Por defecto efectivo
   const [clientId, setClientId] = useState("");
   const [total, setTotal] = useState(0);
+  const [showSummary, setShowSummary] = useState(false);
   const [showClientModal, setShowClientModal] = useState(false);
 
   const paymentMethods = [
@@ -55,23 +57,25 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
     }
   };
 
+  // Búsqueda por nombre y autocompletar
   const filterProducts = () => {
     if (searchTerm.trim() === "") {
       setFilteredProducts([]);
     } else {
+      const term = searchTerm.toLowerCase();
       const filtered = products.filter((product) =>
-        product.id.toString().includes(searchTerm)
+        product.nombre.toLowerCase().includes(term) || product.id.toString().includes(term)
       );
       setFilteredProducts(filtered);
     }
   };
 
-  const handleAddProductToSale = (product) => {
-    const isAppDelivery = paymentMethod === "5"; // ID de "App Delivery"
+  // Botón rápido para agregar cantidad personalizada
+  const handleAddProductToSale = (product, cantidad = 1) => {
+    const isAppDelivery = paymentMethod === "5";
     const price = isAppDelivery
       ? parseFloat(product.precio_alternativo || 0)
       : parseFloat(product.precio || 0);
-
     const existingProduct = selectedProducts.find((p) => p.id === product.id);
     if (existingProduct) {
       setSelectedProducts((prev) =>
@@ -79,8 +83,8 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
           p.id === product.id
             ? {
                 ...p,
-                quantity: p.quantity + 1,
-                total: (p.quantity + 1) * price,
+                quantity: p.quantity + cantidad,
+                total: (p.quantity + cantidad) * price,
               }
             : p
         )
@@ -90,9 +94,9 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
         ...prev,
         {
           ...product,
-          quantity: 1,
+          quantity: cantidad,
           precio_unitario: price,
-          total: price,
+          total: cantidad * price,
         },
       ]);
     }
@@ -102,8 +106,9 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
     setSelectedProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
+  // Edición directa de cantidad
   const handleQuantityChange = (productId, newQuantity) => {
-    if (newQuantity < 1) return; // Evita cantidades negativas o cero
+    if (newQuantity < 1) return;
     setSelectedProducts((prev) =>
       prev.map((p) =>
         p.id === productId
@@ -129,12 +134,16 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
     calculateTotal();
   }, [selectedProducts]);
 
+  // Mostrar resumen antes de finalizar
   const handleFinalizeSale = async () => {
+    setShowSummary(true);
+  };
+
+  const handleConfirmSale = async () => {
     if (!paymentMethod) {
-      alert('Por favor seleccione un método de pago.');
+      showAviso('Por favor seleccione un método de pago.');
       return;
     }
-  
     const saleData = {
       cliente_id: clientId || null,
       metodo_pago_id: paymentMethod,
@@ -144,28 +153,28 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
         cantidad: product.quantity,
         precio_unitario: product.precio_unitario,
         total: product.total,
-        puntos_suma: product.puntos_suma, // Verifica que esto esté definido
+        puntos_suma: product.puntos_suma,
       })),
     };
-  
     try {
       await axios.post('http://localhost:5000/api/sales', saleData);
-      alert('Venta confirmada exitosamente');
-      // Reiniciar estados del modal
+      showAviso('Venta confirmada exitosamente');
       setSelectedProducts([]);
-      setPaymentMethod('');
+      setPaymentMethod('1');
       setClientId('');
+      setShowSummary(false);
+      if (typeof onSaleRegistered === 'function') onSaleRegistered();
       onClose();
     } catch (error) {
       console.error('Error confirmando la venta:', error);
-      alert('Error al confirmar la venta');
+      showAviso('Error al confirmar la venta');
     }
   };
 
   const fetchClientPoints = async (clientId) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/clients/${clientId}`);
-      alert(`Puntos acumulados: ${response.data.puntos_acumulados}`);
+      showAviso(`Puntos acumulados: ${response.data.puntos_acumulados}`);
     } catch (error) {
       console.error("Error fetching client points:", error);
     }
@@ -189,158 +198,253 @@ function SalesModal({ show, onClose, selectedProducts, setSelectedProducts }) {
     handleCloseClientModal();
   };
 
+  // Limpiar formulario al cerrar el modal
+  const handleCloseModal = () => {
+    setSelectedProducts([]);
+    setPaymentMethod('1');
+    setClientId('');
+    setShowSummary(false);
+    onClose();
+  };
   if (!show) return null;
 
+  // Productos frecuentes (más vendidos o recientes)
+  const productosFrecuentes = products.slice(0, 5); // Simulación: los primeros 5
 
   return (
     <>
-      <div
-        className="modal show d-block"
-        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-      >
+      <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Nueva Venta</h5>
-              <button className="btn-close" onClick={onClose}></button>
+            <div className="modal-header bg-primary text-white">
+              <h5 className="modal-title">
+                <i className="fas fa-shopping-cart me-2"></i> Nueva Venta
+              </h5>
+              <button className="btn-close" onClick={handleCloseModal}></button>
             </div>
-            <div className="modal-body">
-              <div className="mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Buscar productos por ID..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              {filteredProducts.length > 0 && (
-                <table className="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Nombre</th>
-                      <th>Precio</th>
-                      <th>Stock</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredProducts.map((product) => (
-                      <tr key={product.id}>
-                        <td>{product.id}</td>
-                        <td>{product.nombre}</td>
-                        <td>${product.precio}</td>
-                        <td>{product.cantidad_stock}</td>
-                        <td>
-                          <button
-                            className="btn btn-success btn-sm"
-                            onClick={() => handleAddProductToSale(product)}
-                          >
-                            Agregar
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-              <h5>Productos Seleccionados</h5>
-              <table className="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {selectedProducts.map((product) => (
-                    <tr key={product.id}>
-                      <td>{product.nombre}</td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          style={{ width: "70px" }}
-                          value={product.quantity}
-                          onChange={(e) =>
-                            handleQuantityChange(
-                              product.id,
-                              parseInt(e.target.value, 10)
-                            )
-                          }
-                        />
-                      </td>
-                      <td>${(product.total || 0).toFixed(2)}</td>
-                      <td>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() =>
-                            handleRemoveProductFromSale(product.id)
-                          }
-                        >
-                          Quitar
-                        </button>
-                      </td>
-                    </tr>
+            <div className="modal-body" style={{ background: "#f8f9fa" }}>
+              {/* Productos frecuentes */}
+              <div className="mb-2">
+                <span className="fw-bold">Productos frecuentes:</span>
+                <div className="d-flex gap-2 flex-wrap mt-1">
+                  {productosFrecuentes.map((product) => (
+                    <button key={product.id} className="btn btn-outline-secondary btn-sm" onClick={() => handleAddProductToSale(product)}>
+                      {product.nombre}
+                    </button>
                   ))}
-                </tbody>
-              </table>
-
-              <div className="mt-3">
-                <label htmlFor="clientId" className="form-label">
-                  Cliente (opcional):
-                </label>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    id="clientId"
-                    className="form-control"
-                    placeholder="ID del cliente"
-                    value={clientId}
-                    onChange={(e) => setClientId(e.target.value)}
-                  />
-                  <button
-                    className="btn btn-primary"
-                    onClick={handleOpenClientModal}
-                  >
-                    Buscar Cliente
-                  </button>
                 </div>
               </div>
-              <div className="mt-3">
-                <label htmlFor="paymentMethod" className="form-label">
-                  Seleccionar Método de Pago:
-                </label>
-                <select
-                  id="paymentMethod"
-                  className="form-select"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                  <option value="">-- Seleccione --</option>
-                  {paymentMethods.map((method) => (
-                    <option key={method.id} value={method.id}>
-                      {method.nombre}
-                    </option>
-                  ))}
-                </select>
+              {/* Buscador de productos */}
+              <div className="card mb-3 shadow-sm" style={{maxHeight: '350px', overflowY: 'auto'}}>
+                <div className="card-body">
+                  <div className="d-flex align-items-center mb-2">
+                    <i className="fas fa-search me-2 text-secondary"></i>
+                    <span className="fw-bold">Buscar productos</span>
+                  </div>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Buscar productos por nombre o ID..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    autoFocus
+                  />
+                  {/* Autocompletar */}
+                  {searchTerm.trim() !== "" ? (
+                    filteredProducts.length > 0 ? (
+                      <table className="table table-bordered mt-3">
+                        <thead className="table-light">
+                          <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredProducts.map((product, idx) => (
+                            <tr key={product.id} className={idx % 2 === 0 ? "table-light" : ""}>
+                              <td>{product.id}</td>
+                              <td>{product.nombre}</td>
+                              <td>${product.precio}</td>
+                              <td>
+                                {/* Resaltado de stock bajo */}
+                                <span className={product.cantidad_stock <= 5 ? "badge bg-danger" : ""}>{product.cantidad_stock}</span>
+                              </td>
+                              <td>
+                                <div className="d-flex gap-1">
+                                  <button className="btn btn-success btn-sm" onClick={() => handleAddProductToSale(product, 1)}>
+                                    +1
+                                  </button>
+                                  <button className="btn btn-info btn-sm" onClick={() => handleAddProductToSale(product, 5)}>
+                                    +5
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="alert alert-warning mt-3 d-flex align-items-center" role="alert">
+                        <i className="fas fa-exclamation-circle me-2"></i>
+                        No se encontraron productos que coincidan con la búsqueda.
+                      </div>
+                    )
+                  ) : null}
+                </div>
               </div>
-              <h5 className="mt-3">Total: ${total.toFixed(2)}</h5>
+
+              {/* Productos seleccionados */}
+              <div className="card mb-3 shadow-sm">
+                <div className="card-body">
+                  <div className="d-flex align-items-center mb-2">
+                    <i className="fas fa-box-open me-2 text-secondary"></i>
+                    <span className="fw-bold">Productos Seleccionados</span>
+                  </div>
+                  <table className="table table-bordered">
+                    <thead className="table-light">
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedProducts.length === 0 ? (
+                        <tr><td colSpan="4" className="text-center text-muted">No hay productos seleccionados.</td></tr>
+                      ) : (
+                        selectedProducts.map((product, idx) => (
+                          <tr key={product.id} className={idx % 2 === 0 ? "table-light" : ""}>
+                            <td>{product.nombre}</td>
+                            <td>
+                              <input
+                                type="number"
+                                className="form-control"
+                                style={{ width: "70px" }}
+                                value={product.quantity}
+                                onChange={(e) =>
+                                  handleQuantityChange(
+                                    product.id,
+                                    parseInt(e.target.value, 10)
+                                  )
+                                }
+                              />
+                            </td>
+                            <td><span className="badge bg-info">${(product.total || 0).toFixed(2)}</span></td>
+                            <td>
+                              <button className="btn btn-danger btn-sm d-flex align-items-center" onClick={() => handleRemoveProductFromSale(product.id)}>
+                                <i className="fas fa-trash me-1"></i> Quitar
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Cliente y método de pago */}
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <div className="card shadow-sm">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center mb-2">
+                        <i className="fas fa-user me-2 text-secondary"></i>
+                        <span className="fw-bold">Cliente (opcional)</span>
+                      </div>
+                      <div className="input-group">
+                        <input
+                          type="text"
+                          id="clientId"
+                          className="form-control"
+                          placeholder="ID del cliente (opcional)"
+                          value={clientId}
+                          onChange={(e) => setClientId(e.target.value)}
+                        />
+                        <button className="btn btn-primary d-flex align-items-center" onClick={handleOpenClientModal}>
+                          <i className="fas fa-search me-1"></i> Buscar Cliente
+                        </button>
+                      </div>
+                      <div className="form-text">Si no se ingresa cliente, se registra como venta rápida.</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="card shadow-sm">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center mb-2">
+                        <i className="fas fa-credit-card me-2 text-secondary"></i>
+                        <span className="fw-bold">Método de Pago</span>
+                      </div>
+                      <select
+                        id="paymentMethod"
+                        className="form-select"
+                        value={paymentMethod}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                      >
+                        {paymentMethods.map((method) => (
+                          <option key={method.id} value={method.id}>
+                            {method.nombre}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="form-text">Por defecto: Efectivo</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="card mt-3 shadow-sm">
+                <div className="card-body d-flex align-items-center justify-content-between">
+                  <span className="fw-bold fs-5"><i className="fas fa-dollar-sign me-2 text-success"></i> Total:</span>
+                  <span className="badge bg-success fs-5">${total.toFixed(2)}</span>
+                </div>
+              </div>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-primary" onClick={handleFinalizeSale}>
-                Finalizar Venta
+              <button className="btn btn-primary d-flex align-items-center" onClick={handleFinalizeSale}>
+                <i className="fas fa-check me-2"></i> Finalizar Venta
               </button>
-              <button className="btn btn-secondary" onClick={onClose}>
-                Cancelar
+              <button className="btn btn-secondary d-flex align-items-center" onClick={handleCloseModal}>
+                <i className="fas fa-times me-2"></i> Cancelar
               </button>
             </div>
           </div>
         </div>
       </div>
+      {/* Modal de resumen antes de confirmar */}
+      {showSummary && (
+        <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header bg-info text-white">
+                <h5 className="modal-title">Resumen de la Venta</h5>
+                <button className="btn-close" onClick={() => setShowSummary(false)}></button>
+              </div>
+              <div className="modal-body">
+                <p><strong>Cliente:</strong> {clientId ? clientId : 'Venta rápida (sin cliente)'}</p>
+                <p><strong>Método de Pago:</strong> {paymentMethods.find(m => m.id.toString() === paymentMethod)?.nombre}</p>
+                <p><strong>Total:</strong> ${total.toFixed(2)}</p>
+                <h6>Productos:</h6>
+                <ul>
+                  {selectedProducts.map((p) => (
+                    <li key={p.id}>{p.nombre} x{p.quantity} = ${p.total.toFixed(2)}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-success" onClick={handleConfirmSale}>Confirmar y Registrar</button>
+                <button className="btn btn-secondary" onClick={handleCloseModal}>Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {showClientModal && (
         <ClientSearchModal
           show={showClientModal}

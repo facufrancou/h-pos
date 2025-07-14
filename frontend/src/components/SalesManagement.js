@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { showAviso } from "../utils/printExportUtils";
 
 // Mapeo de medios de pago
 const paymentMethods = {
@@ -50,7 +51,7 @@ function SalesManagement() {
   const handleDateFilter = (e) => {
     e.preventDefault();
     if (!filterDates.startDate || !filterDates.endDate) {
-      alert("Por favor seleccione un rango de fechas válido.");
+      showAviso("Por favor seleccione un rango de fechas válido.");
       return;
     }
     fetchSalesByDate(filterDates.startDate, filterDates.endDate);
@@ -181,25 +182,32 @@ function SalesManagement() {
                     </tr>
                   </thead>
                   <tbody>
-  {selectedSale.productos.map((producto, index) => (
-    <tr key={index}>
-      <td>{producto.producto ? producto.producto.nombre : "Producto eliminado"}</td>
-      <td>{producto.cantidad}</td>
-      <td>
-        $
-        {producto.precio_unitario
-          ? parseFloat(producto.precio_unitario).toFixed(2)
-          : "0.00"}
-      </td>
-      <td>
-        $
-        {producto.precio_unitario
-          ? (producto.cantidad * parseFloat(producto.precio_unitario)).toFixed(2)
-          : "0.00"}
-      </td>
-    </tr>
-  ))}
-</tbody>
+                    {selectedSale.productos.map((producto, index) => (
+                      <tr key={index}>
+                        <td>
+                          {producto.producto
+                            ? producto.producto.nombre
+                            : "Producto eliminado"}
+                        </td>
+                        <td>{producto.cantidad}</td>
+                        <td>
+                          $
+                          {producto.precio_unitario
+                            ? parseFloat(producto.precio_unitario).toFixed(2)
+                            : "0.00"}
+                        </td>
+                        <td>
+                          $
+                          {producto.precio_unitario
+                            ? (
+                                producto.cantidad *
+                                parseFloat(producto.precio_unitario)
+                              ).toFixed(2)
+                            : "0.00"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
               <div className="modal-footer">

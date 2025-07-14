@@ -7,6 +7,7 @@ import ProductManagement from './components/ProductManagement';
 import SalesManagement from './components/SalesManagement';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Importa el JS de Bootstrap
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
   return (

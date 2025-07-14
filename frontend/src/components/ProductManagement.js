@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { showAviso } from '../utils/printExportUtils';
 
 function ProductManagement() {
   const [products, setProducts] = useState([]);
@@ -58,7 +59,7 @@ function ProductManagement() {
       try {
         await axios.delete(`http://localhost:5000/api/products/${id}`);
         fetchProducts();
-        alert('Producto eliminado exitosamente');
+        showAviso('Producto eliminado exitosamente');
       } catch (error) {
         console.error('Error deleting product:', error);
       }
@@ -70,10 +71,10 @@ function ProductManagement() {
     try {
       if (isEditing) {
         await axios.put(`http://localhost:5000/api/products/${form.id}`, form);
-        alert('Producto actualizado exitosamente');
+        showAviso('Producto actualizado exitosamente');
       } else {
         await axios.post('http://localhost:5000/api/products', form);
-        alert('Producto agregado exitosamente');
+        showAviso('Producto agregado exitosamente');
       }
       fetchProducts();
       setShowModal(false);
