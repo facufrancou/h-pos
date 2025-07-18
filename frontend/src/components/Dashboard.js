@@ -643,61 +643,76 @@ function Dashboard() {
       {showClosureModal && (
         <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog modal-lg">
-            <div className="modal-content">
-              <div className="modal-header bg-primary text-white">
-                <h5 className="mb-0">
+            <div className="modal-content shadow-lg" style={{ borderRadius: "16px" }}>
+              <div className="modal-header" style={{ borderBottom: "1px solid #e3e6ee", background: "#f4f8fb" }}>
+                <h5 className="mb-0 fw-bold" style={{ fontSize: "1.5rem", color: "#0d6efd" }}>
                   <i className="fas fa-chart-pie me-2"></i> Resumen del día
                 </h5>
                 <button className="btn-close" onClick={() => setShowClosureModal(false)}></button>
               </div>
-              <div className="modal-body" style={{ background: "#f8f9fa" }}>
+              <div className="modal-body" style={{ background: "#f8fafd", padding: "2rem" }}>
                 <div className="row g-4">
                   <div className="col-md-6">
-                    <h6 className="mb-3"><i className="fas fa-balance-scale me-2 text-secondary"></i> Balance</h6>
-                    <div className="mb-2">
-                      <span className="fw-bold">Fondo Inicial:</span>
-                      <span className="badge bg-info ms-2">${closureData.fondoInicial}</span>
-                    </div>
-                    <div className="mb-2">
-                      <span className="fw-bold">Fondo Final:</span>
-                      <span className="badge bg-success ms-2">${closureData.fondoFinal}</span>
-                    </div>
-                    <div className="mb-2">
-                      <span className="fw-bold">Total Retiros:</span>
-                      <span className="badge bg-danger ms-2">-${closureData.totalRetiros}</span>
+                    <h6 className="mb-3 fw-bold" style={{ color: "#0d6efd", fontSize: "1.1rem" }}>
+                      <i className="fas fa-balance-scale me-2"></i> Balance
+                    </h6>
+                    <div className="card shadow-sm border-0 p-3 mb-3" style={{ background: "#fff" }}>
+                      <div className="mb-2 d-flex justify-content-between">
+                        <span className="fw-bold">Fondo Inicial:</span>
+                        <span className="badge bg-info ms-2" style={{ fontSize: "1rem" }}>${closureData.fondoInicial}</span>
+                      </div>
+                      <div className="mb-2 d-flex justify-content-between">
+                        <span className="fw-bold">Fondo Final:</span>
+                        <span className="badge bg-success ms-2" style={{ fontSize: "1rem" }}>${closureData.fondoFinal}</span>
+                      </div>
+                      <div className="mb-1 d-flex justify-content-between">
+                        <span className="fw-bold">Total Retiros:</span>
+                        <span className="badge bg-danger ms-2" style={{ fontSize: "1rem" }}>-${closureData.totalRetiros}</span>
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-6">
-                    <h6 className="mb-3"><i className="fas fa-shopping-basket me-2 text-secondary"></i> Ventas</h6>
-                    <div className="mb-2">
-                      <span className="fw-bold">Número Total de Ventas:</span>
-                      <span className="badge bg-primary ms-2">{closureData.totalVentasNumero || 0}</span>
-                    </div>
-                    <div className="mb-2">
-                      <span className="fw-bold">Monto Total de Ventas:</span>
-                      <span className="badge bg-success ms-2">${closureData.totalVentasMonto || 0}</span>
+                    <h6 className="mb-3 fw-bold" style={{ color: "#0d6efd", fontSize: "1.1rem" }}>
+                      <i className="fas fa-shopping-basket me-2"></i> Ventas
+                    </h6>
+                    <div className="card shadow-sm border-0 p-3 mb-3" style={{ background: "#fff" }}>
+                      <div className="mb-2 d-flex justify-content-between">
+                        <span className="fw-bold">Número Total de Ventas:</span>
+                        <span className="badge bg-primary ms-2" style={{ fontSize: "1rem" }}>{closureData.totalVentasNumero || 0}</span>
+                      </div>
+                      <div className="mb-1 d-flex justify-content-between">
+                        <span className="fw-bold">Monto Total de Ventas:</span>
+                        <span className="badge bg-success ms-2" style={{ fontSize: "1rem" }}>${closureData.totalVentasMonto || 0}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <hr />
+                <hr style={{ margin: "1.5rem 0", borderColor: "#e3e6ee" }} />
                 {/* Resumen de turnos del día */}
                 <div className="row g-4">
                   <div className="col-12">
-                    <h6 className="mb-3"><i className="fas fa-user-clock me-2 text-secondary"></i> Resumen de Turnos del Día</h6>
-                    <ul className="list-unstyled">
+                    <h6 className="mb-3 fw-bold" style={{ color: "#0d6efd", fontSize: "1.1rem" }}>
+                      <i className="fas fa-user-clock me-2"></i> Resumen de Turnos del Día
+                    </h6>
+                    <div className="card shadow-sm border-0 p-3 mb-3" style={{ background: "#fff" }}>
                       {shiftsToday.length > 0 ? (
-                        shiftsToday.map((turno, idx) => (
-                          <li key={idx} className="d-flex align-items-center justify-content-between" style={{ marginBottom: '10px' }}>
-                            <div>
-                              <span className="fw-bold">{turno.usuario || 'Sin nombre'}</span>
-                              <span className="ms-2 text-muted">{turno.inicio ? new Date(turno.inicio).toLocaleString() : '-'}</span>
-                            </div>
-                            <button className="btn btn-sm btn-outline-info" onClick={() => handleShowShiftDetail(turno)}>Ver detalle</button>
-                          </li>
-                        ))
+                        <ul className="list-unstyled mb-0">
+                          {shiftsToday.map((turno, idx) => (
+                            <li key={idx} className="d-flex align-items-center justify-content-between" style={{ marginBottom: idx < shiftsToday.length - 1 ? '12px' : '0', paddingBottom: idx < shiftsToday.length - 1 ? '12px' : '0', borderBottom: idx < shiftsToday.length - 1 ? '1px solid #eee' : 'none' }}>
+                              <div>
+                                <span className="fw-bold" style={{ color: "#0d6efd" }}>{turno.usuario || 'Sin nombre'}</span>
+                                <span className="ms-2 text-muted">{turno.inicio ? new Date(turno.inicio).toLocaleString() : '-'}</span>
+                              </div>
+                              <button className="btn btn-sm btn-outline-info fw-bold" style={{ borderRadius: "6px" }} onClick={() => handleShowShiftDetail(turno)}>
+                                <i className="fas fa-info-circle me-1"></i> Ver detalle
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
                       ) : (
-                        <li className="text-muted">No hay turnos registrados hoy.</li>
+                        <p className="text-muted mb-0 text-center py-2">No hay turnos registrados hoy.</p>
                       )}
+                    </div>
   {/* Línea separadora entre resumen de turnos y detalle de fondos */}
   <hr />
       {/* Modal de detalle de turno */}
@@ -781,45 +796,64 @@ function Dashboard() {
           </div>
         </div>
       )}
-                    </ul>
                   </div>
                 </div>
                 <div className="row g-4">
                   <div className="col-md-6">
-                    <h6 className="mb-3"><i className="fas fa-wallet me-2 text-secondary"></i> Detalle de Fondos</h6>
-                    <ul className="list-unstyled">
-                      <li><span className="fw-bold">Fondo en Caja:</span> <span className="badge bg-info">${closureData.fondoCaja || 0}</span></li>
-                      <li><span className="fw-bold">Fondo en Cuenta:</span> <span className="badge bg-warning text-dark">${closureData.fondoCuenta || 0}</span></li>
-                    </ul>
+                    <h6 className="mb-3 fw-bold" style={{ color: "#0d6efd", fontSize: "1.1rem" }}>
+                      <i className="fas fa-wallet me-2"></i> Detalle de Fondos
+                    </h6>
+                    <div className="card shadow-sm border-0 p-3 mb-3" style={{ background: "#fff" }}>
+                      <div className="d-flex justify-content-between mb-2">
+                        <span className="fw-bold">Fondo en Caja:</span>
+                        <span className="badge bg-info ms-2" style={{ fontSize: "1rem" }}>${closureData.fondoCaja || 0}</span>
+                      </div>
+                      <div className="d-flex justify-content-between">
+                        <span className="fw-bold">Fondo en Cuenta:</span>
+                        <span className="badge bg-warning text-dark ms-2" style={{ fontSize: "1rem" }}>${closureData.fondoCuenta || 0}</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="col-md-6">
-                    <h6 className="mb-3"><i className="fas fa-credit-card me-2 text-secondary"></i> Ventas por Método de Pago</h6>
-                    <ul className="list-unstyled">
+                    <h6 className="mb-3 fw-bold" style={{ color: "#0d6efd", fontSize: "1.1rem" }}>
+                      <i className="fas fa-credit-card me-2"></i> Ventas por Método de Pago
+                    </h6>
+                    <div className="card shadow-sm border-0 p-3 mb-3" style={{ background: "#fff" }}>
                       {closureData.ventasPorMetodo.length > 0 ? (
-                        closureData.ventasPorMetodo.map((venta, index) => (
-                          <li key={index}>
-                            <span className="fw-bold">{paymentMethods[venta.metodo] || `Método ID ${venta.metodo}`}:</span> <span className="badge bg-primary">${venta.total}</span>
-                          </li>
-                        ))
+                        <ul className="list-unstyled mb-0">
+                          {closureData.ventasPorMetodo.map((venta, index) => (
+                            <li key={index} className="d-flex justify-content-between mb-2">
+                              <span className="fw-bold">{paymentMethods[venta.metodo] || `Método ID ${venta.metodo}`}:</span>
+                              <span className="badge bg-primary ms-2" style={{ fontSize: "1rem" }}>${venta.total}</span>
+                            </li>
+                          ))}
+                        </ul>
                       ) : (
-                        <li className="text-muted">No hay ventas registradas.</li>
+                        <p className="text-muted mb-0 text-center">No hay ventas registradas.</p>
                       )}
-                    </ul>
+                    </div>
                   </div>
                 </div>
                 <hr />
                 <div className="row g-4">
                   <div className="col-md-6">
-                    <h6 className="mb-3"><i className="fas fa-arrow-circle-down me-2 text-secondary"></i> Detalle de Retiros</h6>
-                    <ul className="list-unstyled">
+                    <h6 className="mb-3 fw-bold" style={{ color: "#0d6efd", fontSize: "1.1rem" }}>
+                      <i className="fas fa-arrow-circle-down me-2"></i> Detalle de Retiros
+                    </h6>
+                    <div className="card shadow-sm border-0 p-3 mb-3" style={{ background: "#fff" }}>
                       {closureData.retiros.length > 0 ? (
-                        closureData.retiros.map((retiro, index) => (
-                          <li key={index}><span className="fw-bold">{retiro.descripcion}:</span> <span className="badge bg-danger">-${retiro.monto}</span></li>
-                        ))
+                        <ul className="list-unstyled mb-0">
+                          {closureData.retiros.map((retiro, index) => (
+                            <li key={index} className="d-flex justify-content-between mb-2">
+                              <span className="fw-bold">{retiro.descripcion}:</span>
+                              <span className="badge bg-danger ms-2" style={{ fontSize: "1rem" }}>-${retiro.monto}</span>
+                            </li>
+                          ))}
+                        </ul>
                       ) : (
-                        <li className="text-muted">No hay retiros registrados.</li>
+                        <p className="text-muted mb-0 text-center">No hay retiros registrados.</p>
                       )}
-                    </ul>
+                    </div>
                   </div>
                   <div className="col-md-6">
                     <h6 className="mb-3"><i className="fas fa-arrow-circle-up me-2 text-secondary"></i> Fondos Ingresados</h6>
@@ -842,10 +876,16 @@ function Dashboard() {
                   </div>
                 </div>
               </div>
-              <div className="modal-footer">
-                <button className="btn btn-outline-primary me-2" onClick={handlePrint}>Imprimir</button>
-                <button className="btn btn-outline-success me-2" onClick={handleExportPDF}>Exportar PDF</button>
-                <button className="btn btn-secondary" onClick={() => setShowClosureModal(false)}>Cerrar</button>
+              <div className="modal-footer" style={{ borderTop: "1px solid #e3e6ee" }}>
+                <button className="btn btn-outline-primary me-2 fw-bold px-4" style={{ borderRadius: "8px" }} onClick={handlePrint}>
+                  <i className="fas fa-print me-2"></i> Imprimir
+                </button>
+                <button className="btn btn-outline-success me-2 fw-bold px-4" style={{ borderRadius: "8px" }} onClick={handleExportPDF}>
+                  <i className="fas fa-file-export me-2"></i> Exportar PDF
+                </button>
+                <button className="btn btn-secondary fw-bold px-4" style={{ borderRadius: "8px" }} onClick={() => setShowClosureModal(false)}>
+                  Cerrar
+                </button>
               </div>
             </div>
           </div>
