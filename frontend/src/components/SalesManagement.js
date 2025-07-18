@@ -20,6 +20,9 @@ function SalesManagement() {
   });
   const [selectedSale, setSelectedSale] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchDailySales();
@@ -55,12 +58,30 @@ function SalesManagement() {
       return;
     }
     fetchSalesByDate(filterDates.startDate, filterDates.endDate);
+    setCurrentPage(1); // Resetear a la primera página cuando se aplica filtro
   };
 
   const handleShowDetails = (sale) => {
     setSelectedSale(sale);
     setShowDetailModal(true);
   };
+  
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+    setCurrentPage(1); // Resetear a la primera página cuando se busca
+  };
+  
+  // Filtrar ventas según el término de búsqueda
+  const searchFilteredSales = filteredSales.filter((sale) => {
+    if (!searchTerm) return true;
+    
+    return (
+      sale.id.toString().includes(searchTerm) ||
+      (sale.cliente && sale.cliente.nombre && sale.cliente.nombre.toLowerCase().includes(searchTerm)) ||
+      (sale.cliente && sale.cliente.apellido && sale.cliente.apellido.toLowerCase().includes(searchTerm)) ||
+      (paymentMethods[sale.metodo_pago_id] && paymentMethods[sale.metodo_pago_id].toLowerCase().includes(searchTerm))
+    );
+  });
 
   return (
     <div className="container mt-4">
@@ -97,6 +118,16 @@ function SalesManagement() {
           </div>
         </div>
       </form>
+      
+      <div className="mb-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Buscar por ID, cliente o método de pago..."
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
 
       <table className="table table-bordered">
         <thead>
@@ -110,29 +141,69 @@ function SalesManagement() {
           </tr>
         </thead>
         <tbody>
-          {filteredSales.map((sale) => (
-            <tr key={sale.id}>
-              <td>{sale.id}</td>
-              <td>{new Date(sale.fecha).toLocaleString()}</td>
-              <td>${sale.total}</td>
-              <td>{paymentMethods[sale.metodo_pago_id] || "Desconocido"}</td>
-              <td>
-                {sale.cliente
-                  ? `${sale.cliente.nombre} ${sale.cliente.apellido}`
-                  : "No registrado"}
-              </td>
-              <td>
-                <button
-                  className="btn btn-info"
-                  onClick={() => handleShowDetails(sale)}
-                >
-                  Ver Detalles
-                </button>
-              </td>
-            </tr>
-          ))}
+          {searchFilteredSales
+            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+            .map((sale) => (
+              <tr key={sale.id}>
+                <td>{sale.id}</td>
+                <td>{new Date(sale.fecha).toLocaleString()}</td>
+                <td>${sale.total}</td>
+                <td>{paymentMethods[sale.metodo_pago_id] || "Desconocido"}</td>
+                <td>
+                  {sale.cliente
+                    ? `${sale.cliente.nombre} ${sale.cliente.apellido}`
+                    : "No registrado"}
+                </td>
+                <td>
+                  <button
+                    className="btn btn-info"
+                    onClick={() => handleShowDetails(sale)}
+                  >
+                    Ver Detalles
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
+      
+      {/* Paginación */}
+      {searchFilteredSales.length > 0 && (
+        <nav aria-label="Page navigation">
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Anterior
+              </button>
+            </li>
+            
+            {Array.from({ length: Math.ceil(searchFilteredSales.length / itemsPerPage) }).map((_, index) => (
+              <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                <button 
+                  className="page-link" 
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+            
+            <li className={`page-item ${currentPage === Math.ceil(searchFilteredSales.length / itemsPerPage) ? 'disabled' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === Math.ceil(searchFilteredSales.length / itemsPerPage)}
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
 
       {showDetailModal && selectedSale && (
         <div
