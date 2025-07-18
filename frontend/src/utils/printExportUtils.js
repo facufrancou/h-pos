@@ -39,8 +39,15 @@ export function exportHtmlToPDF(htmlContent, title = 'Resumen') {
 }
 
 // Utilidad para mostrar aviso en modal desde utilidades
-export function showAviso(mensaje) {
+export function showAviso(mensaje, type = "info") {
   // Crea y dispara un evento global para mostrar el aviso
-  const event = new CustomEvent("modalAviso", { detail: { mensaje } });
+  const event = new CustomEvent("modalAviso", { detail: { mensaje, type } });
   window.dispatchEvent(event);
+  
+  // Also trigger a toast for non-critical messages
+  if (type !== "error" && type !== "danger") {
+    import("./toastUtils").then(module => {
+      module.showToast(mensaje, type);
+    });
+  }
 }

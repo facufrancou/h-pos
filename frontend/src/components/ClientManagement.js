@@ -17,6 +17,8 @@ function ClientManagement() {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchClients();
@@ -32,7 +34,8 @@ function ClientManagement() {
   };
 
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+    setSearchTerm(e.target.value.toLowerCase());
+    setCurrentPage(1); // Resetear a la primera página cuando se busca
   };
 
   const handleAdd = () => {
@@ -137,7 +140,9 @@ const filteredClients = clients.filter((client) =>
           </tr>
         </thead>
         <tbody>
-        {filteredClients.slice(0, 5).map((client) => (
+        {filteredClients
+          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+          .map((client) => (
             <tr key={client.id}>
               <td>{client.id}</td>
               <td>{client.nombre}</td>
@@ -164,6 +169,44 @@ const filteredClients = clients.filter((client) =>
           ))}
         </tbody>
       </table>
+      
+      {/* Paginación */}
+      {filteredClients.length > 0 && (
+        <nav aria-label="Page navigation">
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Anterior
+              </button>
+            </li>
+            
+            {Array.from({ length: Math.ceil(filteredClients.length / itemsPerPage) }).map((_, index) => (
+              <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                <button 
+                  className="page-link" 
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+            
+            <li className={`page-item ${currentPage === Math.ceil(filteredClients.length / itemsPerPage) ? 'disabled' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === Math.ceil(filteredClients.length / itemsPerPage)}
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
 
       {showModal && (
         <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>

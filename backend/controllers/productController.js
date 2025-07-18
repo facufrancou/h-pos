@@ -14,19 +14,47 @@ exports.getProducts = async (req, res) => {
 exports.addProduct = async (req, res) => {
   try {
     const { nombre, descripcion, precio, precio_alternativo, puntos_suma, cantidad_stock } = req.body;
-
-    const newProduct = await Product.create({
+    
+    // Validar campos requeridos
+    if (!nombre) {
+      return res.status(400).json({ error: 'El nombre del producto es obligatorio' });
+    }
+    
+    if (precio === undefined || precio === null || isNaN(parseFloat(precio))) {
+      return res.status(400).json({ error: 'El precio debe ser un número válido' });
+    }
+    
+    if (cantidad_stock === undefined || cantidad_stock === null || isNaN(parseInt(cantidad_stock))) {
+      return res.status(400).json({ error: 'La cantidad en stock debe ser un número válido' });
+    }
+    
+    // Convertir valores a los tipos correctos
+    const productData = {
       nombre,
-      descripcion,
-      precio,
-      precio_alternativo,
-      puntos_suma,
-      cantidad_stock,
-    });
+      descripcion: descripcion || '',
+      precio: parseFloat(precio),
+      precio_alternativo: precio_alternativo !== null && precio_alternativo !== undefined && !isNaN(parseFloat(precio_alternativo)) 
+        ? parseFloat(precio_alternativo) 
+        : null,
+      puntos_suma: puntos_suma !== null && puntos_suma !== undefined && !isNaN(parseInt(puntos_suma)) 
+        ? parseInt(puntos_suma) 
+        : 0,
+      cantidad_stock: parseInt(cantidad_stock)
+    };
+    
+    console.log('Datos del producto a crear:', productData);
+    
+    const newProduct = await Product.create(productData);
 
     res.status(201).json(newProduct);
   } catch (error) {
-    res.status(500).json({ error: 'Error al agregar producto', details: error });
+    console.error('Error al crear producto:', error);
+    res.status(500).json({ 
+      error: 'Error al agregar producto', 
+      details: error.message,
+      name: error.name,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
@@ -41,19 +69,45 @@ exports.updateProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
+    
+    // Validar campos requeridos
+    if (!nombre) {
+      return res.status(400).json({ error: 'El nombre del producto es obligatorio' });
+    }
+    
+    if (precio === undefined || precio === null || isNaN(parseFloat(precio))) {
+      return res.status(400).json({ error: 'El precio debe ser un número válido' });
+    }
+    
+    if (cantidad_stock === undefined || cantidad_stock === null || isNaN(parseInt(cantidad_stock))) {
+      return res.status(400).json({ error: 'La cantidad en stock debe ser un número válido' });
+    }
 
-    product.nombre = nombre || product.nombre;
-    product.descripcion = descripcion || product.descripcion;
-    product.precio = precio || product.precio;
-    product.precio_alternativo = precio_alternativo || product.precio_alternativo;
-    product.puntos_suma = puntos_suma || product.puntos_suma;
-    product.cantidad_stock = cantidad_stock || product.cantidad_stock;
+    // Actualizar propiedades con conversión de tipos
+    product.nombre = nombre;
+    product.descripcion = descripcion || '';
+    product.precio = parseFloat(precio);
+    product.precio_alternativo = precio_alternativo !== null && precio_alternativo !== undefined && !isNaN(parseFloat(precio_alternativo)) 
+      ? parseFloat(precio_alternativo) 
+      : null;
+    product.puntos_suma = puntos_suma !== null && puntos_suma !== undefined && !isNaN(parseInt(puntos_suma)) 
+      ? parseInt(puntos_suma) 
+      : 0;
+    product.cantidad_stock = parseInt(cantidad_stock);
 
+    console.log('Datos del producto a actualizar:', product.toJSON());
+    
     await product.save();
 
     res.json(product);
   } catch (error) {
-    res.status(500).json({ error: 'Error al actualizar producto', details: error });
+    console.error('Error al actualizar producto:', error);
+    res.status(500).json({ 
+      error: 'Error al actualizar producto', 
+      details: error.message,
+      name: error.name,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 

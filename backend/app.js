@@ -33,6 +33,15 @@ app.use('/api/closures', closureRoutes);
 app.use('/api/commands', commandRoutes);
 app.use('/api/shifts', shiftRoutes);
 
+// Middleware global para manejo de errores
+app.use((err, req, res, next) => {
+  console.error('Error no manejado:', err);
+  res.status(500).json({
+    error: 'Error interno del servidor',
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
 
  /* // Iniciar el Servidor y Conectar a la Base de Datos
  sequelize.sync({ alter: true }) // Alterará la base de datos según los modelos
